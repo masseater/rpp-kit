@@ -148,3 +148,16 @@ test("閉じていないチャンクは、開いた位置をエラーにする",
     error: { start: 0 },
   });
 });
+
+test("同じ名前のマーカーは最初のものを名前で引け、区間には全部残る", () => {
+  const source =
+    "<REAPER_PROJECT 0.1 7.0 0\n  TEMPO 120 4 4\n  MARKER 1 0 Am7 0\n  MARKER 2 2 G7 0\n  MARKER 3 4 Am7 0\n>\n";
+  expect(readSong(source)).toMatchObject({
+    markers: { Am7: { id: 1, time: 0 }, G7: { id: 2, time: 2 } },
+    sections: [
+      { name: "Am7", start: 0, end: 2 },
+      { name: "G7", start: 2, end: 4 },
+      { name: "Am7", start: 4, end: 4 },
+    ],
+  });
+});
