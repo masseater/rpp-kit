@@ -5,6 +5,7 @@ import { todoSummaryQuery } from "#/pages/home/api/summary";
 
 import { SessionBadge } from "./session-badge";
 import { TodoList } from "./todo-list";
+import { TodoSummary } from "./todo-summary";
 
 const TITLE = "Todos";
 
@@ -16,7 +17,7 @@ const HomePage = (): ReactNode => {
         <h1 className="text-2xl font-bold">{TITLE}</h1>
         <SessionBadge />
       </header>
-      {summary}
+      <TodoSummary open={summary.open} done={summary.done} />
       <TodoList />
     </main>
   );
