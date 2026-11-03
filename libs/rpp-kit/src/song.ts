@@ -35,19 +35,32 @@ const placedNotes = (source: Chunk, position: number, tempo: TempoMap): readonly
   );
 };
 
-const sourceOf = (source: Chunk, position: number, tempo: TempoMap): Source =>
-  Match.value(textOf(Arr.get(source.params, PARAM_INDEX.first))).pipe(
+const innermost = (source: Chunk): Chunk =>
+  Option.match(Arr.head(chunksOf({ chunk: source, token: "SOURCE" })), {
+    onNone: () => source,
+    onSome: innermost,
+  });
+
+const fileSource = (source: Chunk, type: string): Source =>
+  Option.match(firstParam(source, "FILE"), {
+    onNone: () => ({ kind: "other", type }),
+    onSome: ({ text: file }) =>
+      Match.value(type).pipe(
+        Match.when("VIDEO", (): Source => ({ kind: "video", file })),
+        Match.orElse((): Source => ({ kind: "audio", file })),
+      ),
+  });
+
+const sourceOf = (outer: Chunk, position: number, tempo: TempoMap): Source => {
+  const source = innermost(outer);
+  return Match.value(textOf(Arr.get(source.params, PARAM_INDEX.first))).pipe(
     Match.when("MIDI", (): Source => ({
       kind: "midi",
       notes: placedNotes(source, position, tempo),
     })),
-    Match.orElse((type): Source =>
-      Option.match(firstParam(source, "FILE"), {
-        onNone: () => ({ kind: "other", type }),
-        onSome: (file) => ({ kind: "audio", file: file.text }),
-      }),
-    ),
+    Match.orElse((type) => fileSource(source, type)),
   );
+};
 
 const readItem = ({ chunk, tempo }: Placed): Item => {
   const position = numberOr(ZERO)(firstParam(chunk, "POSITION"));
@@ -67,7 +80,7 @@ const filesOf = (root: Chunk): readonly Param[] =>
     chunksOf({ chunk: root, token: "TRACK" }),
     Arr.flatMap((track) => chunksOf({ chunk: track, token: "ITEM" })),
     Arr.flatMap((item) => chunksOf({ chunk: item, token: "SOURCE" })),
-    Arr.flatMap((source) => Arr.fromOption(firstParam(source, "FILE"))),
+    Arr.flatMap((source) => Arr.fromOption(firstParam(innermost(source), "FILE"))),
   );
 
 const tracksOf = ({ chunk: root, tempo }: Placed): readonly TrackOutline[] =>

@@ -3,6 +3,7 @@ type Note = Readonly<{ pitch: number; velocity: number; start: number; duration:
 type Source =
   | Readonly<{ kind: "midi"; notes: readonly Note[] }>
   | Readonly<{ kind: "audio"; file: string }>
+  | Readonly<{ kind: "video"; file: string }>
   | Readonly<{ kind: "other"; type: string }>;
 
 type Item = Readonly<{ name: string; position: number; length: number; source: Source }>;
