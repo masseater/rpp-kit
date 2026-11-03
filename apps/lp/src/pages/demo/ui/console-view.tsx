@@ -24,11 +24,11 @@ const noticeOf = (output: Output): string =>
     }),
   );
 
-const ConsoleView = ({ active }: Readonly<{ active: boolean }>): ReactNode => {
+const ConsoleView = (): ReactNode => {
   const output = useOutput();
   const notice = noticeOf(output);
   return (
-    <div hidden={!active} className="h-full overflow-auto font-mono text-xs" role="log">
+    <div className="h-full overflow-auto font-mono text-xs" role="log">
       <ol>
         {pipe(
           entriesOf(output),

@@ -184,6 +184,7 @@ const restrictedImports = {
 
 const generated = [
   "**/routeTree.gen.ts",
+  "**/*.d.rpp.ts",
   "**/generated/**",
   "**/drizzle/**/snapshot.json",
   ".claude/skills/**",

@@ -14,7 +14,9 @@ REAPER のプロジェクトファイル（`.rpp`）を、MIDI へ書き出さ�
   この `.rpp` は GPLv3 のまま再配布している。
 
 content mapper は TypeScript 7.1 のベータ版の機能で、`tsc --runExternalCode` で使う。
-oxlint の型検査はまだ対応していないので、`vp check` には `.d.rpp.ts` の型を渡している。
+oxlint の型検査はまだ content mapper を読めない（[tsgolint#1166](https://github.com/oxc-project/tsgolint/pull/1166)）。
+そのため `rpp-kit/vite` のプラグインが、`.rpp` の隣に content mapper と同じ型を `.d.rpp.ts` として書き出す。
+手で `declare` を書く必要はない。
 
 ## 公開先
 

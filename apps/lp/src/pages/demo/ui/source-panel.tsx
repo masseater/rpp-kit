@@ -6,6 +6,7 @@ import { useSourceTab } from "#/pages/demo/model/tabs";
 
 import { Pane } from "./pane";
 import { Panel } from "./panel";
+import { PanelBody } from "./panel-body";
 import { TabButton } from "./tab-button";
 
 const SourcePanel = (): ReactNode => {
@@ -17,16 +18,15 @@ const SourcePanel = (): ReactNode => {
     setTab("rpp");
   }, [setTab]);
   return (
-    <Panel
-      tabs={
-        <>
-          <TabButton label={playground.panes.main} active={tab === "main"} onSelect={showMain} />
-          <TabButton label={playground.panes.rpp} active={tab === "rpp"} onSelect={showRpp} />
-        </>
-      }
-    >
-      <Pane name="main" active={tab === "main"} />
-      <Pane name="rpp" active={tab === "rpp"} />
+    <Panel className="h-96 lg:row-span-2 lg:h-auto">
+      <div className="border-border flex border-b px-1" role="tablist">
+        <TabButton label={playground.panes.main} active={tab === "main"} onSelect={showMain} />
+        <TabButton label={playground.panes.rpp} active={tab === "rpp"} onSelect={showRpp} />
+      </div>
+      <PanelBody>
+        <Pane name="main" active={tab === "main"} />
+        <Pane name="rpp" active={tab === "rpp"} />
+      </PanelBody>
     </Panel>
   );
 };
