@@ -1,4 +1,4 @@
-import { Array as Arr, Option, pipe } from "effect";
+import { Array as Arr, Function as Fn, Option, pipe } from "effect";
 
 import { parseRpp } from "./parse.ts";
 import { outlineSong } from "./song.ts";
@@ -45,41 +45,27 @@ const allTracks = (song: Tracked<readonly Track[]>, name: string): readonly Trac
     Arr.filter((track) => track.name === name),
   );
 
-function trackNamed<
-  const Tracks extends readonly Track[],
-  const Name extends Tracks[number]["name"],
->(name: Name): (song: Tracked<Tracks>) => FirstNamed<Tracks, Name>;
-function trackNamed<
-  const Tracks extends readonly Track[],
-  const Name extends Tracks[number]["name"],
->(song: Tracked<Tracks>, name: Name): FirstNamed<Tracks, Name>;
-function trackNamed(
-  subject: Tracked<readonly Track[]> | string,
-  name = "",
-): Named | undefined | ((song: Tracked<readonly Track[]>) => Named | undefined) {
-  if (typeof subject === "string") {
-    return (song) => firstTrack(song, subject);
-  }
-  return firstTrack(subject, name);
-}
+const ARITY = 2;
 
-function tracksNamed<
-  const Tracks extends readonly Track[],
-  const Name extends Tracks[number]["name"],
->(name: Name): (song: Tracked<Tracks>) => AllNamed<Tracks, Name>;
-function tracksNamed<
-  const Tracks extends readonly Track[],
-  const Name extends Tracks[number]["name"],
->(song: Tracked<Tracks>, name: Name): AllNamed<Tracks, Name>;
-function tracksNamed(
-  subject: Tracked<readonly Track[]> | string,
-  name = "",
-): readonly Track[] | ((song: Tracked<readonly Track[]>) => readonly Track[]) {
-  if (typeof subject === "string") {
-    return (song) => allTracks(song, subject);
-  }
-  return allTracks(subject, name);
-}
+const trackNamed: {
+  <const Tracks extends readonly Track[], const Name extends Tracks[number]["name"]>(
+    name: Name,
+  ): (song: Tracked<Tracks>) => FirstNamed<Tracks, Name>;
+  <const Tracks extends readonly Track[], const Name extends Tracks[number]["name"]>(
+    song: Tracked<Tracks>,
+    name: Name,
+  ): FirstNamed<Tracks, Name>;
+} = Fn.dual(ARITY, firstTrack);
+
+const tracksNamed: {
+  <const Tracks extends readonly Track[], const Name extends Tracks[number]["name"]>(
+    name: Name,
+  ): (song: Tracked<Tracks>) => AllNamed<Tracks, Name>;
+  <const Tracks extends readonly Track[], const Name extends Tracks[number]["name"]>(
+    song: Tracked<Tracks>,
+    name: Name,
+  ): AllNamed<Tracks, Name>;
+} = Fn.dual(ARITY, allTracks);
 
 export { readSong, trackNamed, tracksNamed };
 export type { AllNamed, FirstNamed, Named, Tracked };

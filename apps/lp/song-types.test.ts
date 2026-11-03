@@ -1,6 +1,9 @@
 import { Array as Arr, Match, Option, String as Str, pipe } from "effect";
+import { trackNamed } from "rpp-kit";
 import ts from "typescript-6";
-import { beforeAll, describe, expect, it } from "vite-plus/test";
+import { beforeAll, describe, expect, expectTypeOf, it } from "vite-plus/test";
+
+import { song } from "./src/pages/demo/model/song";
 
 const DIRECTORY = new URL("src/pages/demo/model/", import.meta.url).pathname;
 
@@ -67,8 +70,6 @@ const serviceOf = (code: string): ts.LanguageService => {
 
 const PROBE_LINES = {
   known: 'trackNamed(song, "Drums   (BB)");\ntracksNamed(song, "Midi GM");\n',
-  literal:
-    'const midi: "Midi GM" = song.tracks[0].name;\nconst drums: { readonly index: 2 } = trackNamed(song, "Drums   (BB)");\n',
   unknown: 'trackNamed(song, "Drums");\n',
   completion: 'trackNamed(song, "|");\n',
 } as const;
@@ -80,7 +81,7 @@ type Report = Readonly<{
   completions: readonly string[];
 }>;
 
-const SECTIONS: readonly Section[] = ["known", "literal", "unknown", "completion"];
+const SECTIONS: readonly Section[] = ["known", "unknown", "completion"];
 
 const NO_POSITION = -1;
 
@@ -120,7 +121,6 @@ const reportOf = (): Report => {
   return {
     errors: {
       known: errorsIn("known"),
-      literal: errorsIn("literal"),
       unknown: errorsIn("unknown"),
       completion: [],
     },
@@ -163,6 +163,8 @@ describe("import した .rpp の tracks の型", () => {
   });
 
   it("並びの番号でトラックを取ると、名前がその文字列のリテラルの型になる", () => {
-    expect(report().errors.literal).toStrictEqual([]);
+    const [midi, , drums] = song.tracks;
+    expectTypeOf(midi.name).toEqualTypeOf<"Midi GM">();
+    expectTypeOf(trackNamed(song, "Drums   (BB)")).toEqualTypeOf(drums);
   });
 });
