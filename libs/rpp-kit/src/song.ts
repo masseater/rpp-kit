@@ -1,4 +1,4 @@
-import { Array as Arr, Option, Record as Rec, pipe } from "effect";
+import { Array as Arr, Option, Order, pipe } from "effect";
 
 import { innermost, readItem } from "./item.ts";
 import { named, sectionsOf, timelineOf } from "./markers.ts";
@@ -67,7 +67,7 @@ const outlineSong = (root: Chunk): SongOutline => {
   const markers = pipe(
     timeline.markers,
     Arr.filter(named),
-    Arr.dedupeWith((left, right) => left.marker.name === right.marker.name),
+    Arr.sortWith(({ marker }) => marker.time, Order.Number),
   );
   const song = {
     tempo: {
@@ -80,8 +80,7 @@ const outlineSong = (root: Chunk): SongOutline => {
     length,
     markers: pipe(
       markers,
-      Arr.map(({ marker }) => [marker.name, marker] as const),
-      Rec.fromEntries,
+      Arr.map(({ marker }) => marker),
     ),
     regions: timeline.regions,
     sections: sectionsOf({ timeline, length }),

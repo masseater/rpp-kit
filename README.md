@@ -6,7 +6,9 @@ REAPER のプロジェクトファイル（`.rpp`）を、MIDI へ書き出さ�
 - `libs/rpp-kit` は `.rpp` のパーサーと、それを使う Vite プラグイン（`rpp-kit/vite`）と、
   TypeScript 7.1 の content mapper を持つ。
 - content mapper を有効にすると、マーカー名やテンポがリテラル型になり、
-  `song.markers.Gm8` のような無いマーカーは型エラーになる。
+  `song.markers` は時刻の順の配列で、同じ名前のマーカーも全部残る。
+  `markerNamed(song, "Gm9")` と `markersNamed(song, "Gm9")` で名前から引け、
+  `markerNamed(song, "Gm8")` のような無いマーカーは型エラーになる。
   `song.tracks` は REAPER での並び順の配列で、同じ名前のトラックも全部残る。
   `trackNamed(song, "Bass")` と `tracksNamed(song, "Bass")` で名前から引け、無い名前は型エラーになる。
   `.rpp` が参照する音声ファイルが無ければ、そのファイル名の行がエラーになる。

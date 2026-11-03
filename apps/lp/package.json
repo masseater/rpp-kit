@@ -43,6 +43,7 @@
     "@vitejs/plugin-react": "catalog:",
     "node-html-parser": "9.0.6",
     "steiger": "catalog:stack",
+    "twoslash": "catalog:",
     "typescript": "catalog:stack",
     "vite": "catalog:",
     "vite-plus": "catalog:stack"

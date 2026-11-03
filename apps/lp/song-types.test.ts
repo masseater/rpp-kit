@@ -1,31 +1,10 @@
-import { Array as Arr, Match, Option, String as Str, pipe } from "effect";
-import { trackNamed } from "rpp-kit";
+import { Array as Arr, Order, String as Str, pipe } from "effect";
+import { markerNamed, markersNamed, trackNamed } from "rpp-kit";
+import { createTwoslasher } from "twoslash";
 import ts from "typescript-6";
 import { beforeAll, describe, expect, expectTypeOf, it } from "vite-plus/test";
 
 import { song } from "./src/pages/demo/model/song";
-
-const DIRECTORY = new URL("src/pages/demo/model/", import.meta.url).pathname;
-
-const PROBE = `${DIRECTORY}song-types.probe.ts`;
-
-const HEADER =
-  'import { trackNamed, tracksNamed } from "rpp-kit";\nimport { song } from "./song";\n';
-
-const CURSOR = "|";
-
-const OPTIONS: ts.CompilerOptions = {
-  target: ts.ScriptTarget.ES2022,
-  lib: ["lib.es2022.d.ts"],
-  module: ts.ModuleKind.ESNext,
-  moduleResolution: ts.ModuleResolutionKind.Bundler,
-  allowImportingTsExtensions: true,
-  allowArbitraryExtensions: true,
-  strict: true,
-  noEmit: true,
-  skipLibCheck: true,
-  types: [],
-};
 
 const TRACK_NAMES = [
   "Midi GM",
@@ -36,135 +15,147 @@ const TRACK_NAMES = [
   "Melody  (BB)",
 ] as const;
 
-const readOf =
-  (code: string) =>
-  (file: string): string | undefined =>
-    Match.value(file).pipe(
-      Match.when(PROBE, () => code),
-      Match.orElse(() => ts.sys.readFile(file)),
-    );
+const MARKER_NAMES = ["Gm9", "Cm9", "Bb2", "Gm7", "Ebm9", "Ebm11", "Fm9"] as const;
 
-const serviceOf = (code: string): ts.LanguageService => {
-  const read = readOf(code);
-  return ts.createLanguageService(
-    {
-      getScriptFileNames: () => [PROBE],
-      getScriptVersion: () => "1",
-      getScriptSnapshot: (file) =>
-        pipe(
-          Option.fromNullishOr(read(file)),
-          Option.map((text) => ts.ScriptSnapshot.fromString(text)),
-          Option.getOrUndefined,
-        ),
-      getCurrentDirectory: () => DIRECTORY,
-      getCompilationSettings: () => OPTIONS,
-      getDefaultLibFileName: (options) => ts.getDefaultLibFilePath(options),
-      fileExists: (file) => file === PROBE || ts.sys.fileExists(file),
-      readFile: read,
-      directoryExists: (directory) => ts.sys.directoryExists(directory),
-      getDirectories: (directory) => ts.sys.getDirectories(directory),
-    },
-    ts.createDocumentRegistry(),
+const MARKER_COUNT = 25;
+
+const CM9_TIME = 16;
+
+const NOT_ASSIGNABLE = 2345;
+
+const COMMENT = "//";
+
+const twoslasher = createTwoslasher({
+  tsModule: ts,
+  tsLibDirectory: new URL("node_modules/typescript-6/lib", import.meta.url).pathname,
+  vfsRoot: new URL("src/pages/demo/model", import.meta.url).pathname,
+  compilerOptions: {
+    target: ts.ScriptTarget.ES2022,
+    lib: ["lib.es2022.d.ts"],
+    module: ts.ModuleKind.ESNext,
+    moduleResolution: ts.ModuleResolutionKind.Bundler,
+    allowImportingTsExtensions: true,
+    allowArbitraryExtensions: true,
+    strict: true,
+    noEmit: true,
+    skipLibCheck: true,
+    types: [],
+  },
+});
+
+const QUOTE = '"';
+
+const completeAfter = (call: string): readonly string[] => [
+  `${call}${QUOTE}${QUOTE});`,
+  `${COMMENT}${pipe(" ", Str.repeat(call.length + QUOTE.length - COMMENT.length))}^|`,
+];
+
+const PROBE = [
+  'import { markerNamed, markersNamed, trackNamed, tracksNamed } from "rpp-kit";',
+  'import { song } from "./song";',
+  'trackNamed(song, "Drums   (BB)");',
+  'tracksNamed(song, "Midi GM");',
+  'markerNamed(song, "Cm9");',
+  'markersNamed(song, "Gm9");',
+  'trackNamed(song, "Drums");',
+  'markerNamed(song, "Gm8");',
+  ...completeAfter("trackNamed(song, "),
+  ...completeAfter("markerNamed(song, "),
+];
+
+type Probed = Readonly<{ errors: readonly string[]; completions: readonly (readonly string[])[] }>;
+
+const cache: Probed[] = [];
+
+const probe = (): Probed =>
+  pipe(
+    Arr.head(cache),
+    Arr.fromOption,
+    Arr.match({
+      onNonEmpty: ([found]) => found,
+      onEmpty: () => {
+        const result = twoslasher(pipe(PROBE, Arr.join("\n")), "ts", {
+          handbookOptions: { errors: [NOT_ASSIGNABLE] },
+        });
+        const made = {
+          errors: pipe(
+            result.errors,
+            Arr.map(({ text }) => text),
+          ),
+          completions: pipe(
+            result.completions,
+            Arr.map(({ completions }) =>
+              pipe(
+                completions,
+                Arr.map(({ name }) => name),
+                Arr.sortWith((name) => name, Order.String),
+              ),
+            ),
+          ),
+        };
+        cache.push(made);
+        return made;
+      },
+    }),
   );
-};
 
-const PROBE_LINES = {
-  known: 'trackNamed(song, "Drums   (BB)");\ntracksNamed(song, "Midi GM");\n',
-  unknown: 'trackNamed(song, "Drums");\n',
-  completion: 'trackNamed(song, "|");\n',
-} as const;
-
-type Section = keyof typeof PROBE_LINES;
-
-type Report = Readonly<{
-  errors: Readonly<Record<Section, readonly string[]>>;
-  completions: readonly string[];
-}>;
-
-const SECTIONS: readonly Section[] = ["known", "unknown", "completion"];
-
-const NO_POSITION = -1;
-
-const NEXT = 1;
-
-const reportOf = (): Report => {
-  const body = pipe(
-    SECTIONS,
-    Arr.map((section) => PROBE_LINES[section]),
-    Arr.join(""),
-  );
-  const code = `${HEADER}${pipe(body, Str.replace(CURSOR, ""))}`;
-  const cursor = HEADER.length + Option.getOrElse(Str.indexOf(CURSOR)(body), () => body.length);
-  const starts = Arr.scan(
-    SECTIONS,
-    HEADER.length,
-    (start, section) => start + PROBE_LINES[section].length - Number(section === "completion"),
-  );
-  const service = serviceOf(code);
-  const diagnostics = service.getSemanticDiagnostics(PROBE);
-  const errorsIn = (section: Section): readonly string[] => {
-    const index = Option.getOrElse(
-      Arr.findFirstIndex(SECTIONS, (found) => found === section),
-      () => NO_POSITION,
-    );
-    return pipe(
-      diagnostics,
-      Arr.filter(({ start = NO_POSITION }) =>
-        Option.match(Option.all([Arr.get(starts, index), Arr.get(starts, index + NEXT)]), {
-          onNone: () => false,
-          onSome: ([from, to]) => start >= from && start < to,
-        }),
-      ),
-      Arr.map((diagnostic) => ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n")),
-    );
-  };
-  return {
-    errors: {
-      known: errorsIn("known"),
-      unknown: errorsIn("unknown"),
-      completion: [],
-    },
-    completions: pipe(
-      Option.fromNullishOr(service.getCompletionsAtPosition(PROBE, cursor, {})),
-      Option.map(({ entries }) =>
-        pipe(
-          entries,
-          Arr.map(({ name }) => name),
-        ),
-      ),
-      Option.getOrElse(() => []),
-    ),
-  };
-};
-
-const cache: Report[] = [];
-
-const report = (): Report =>
-  Option.getOrElse(Arr.head(cache), () => {
-    const made = reportOf();
-    cache.push(made);
-    return made;
-  });
-
-describe("import した .rpp の tracks の型", () => {
+describe("import した .rpp の名前で引く関数の型", () => {
   beforeAll(() => {
-    report();
+    probe();
   });
 
-  it("trackNamed の名前の候補に、トラックの名前が全部出る", () => {
-    expect(report().completions).toStrictEqual(expect.arrayContaining([...TRACK_NAMES]));
+  it("候補に、トラックとマーカーの名前が全部出る", () => {
+    expect(probe().completions).toStrictEqual([
+      pipe(
+        TRACK_NAMES,
+        Arr.sortWith((name) => name, Order.String),
+      ),
+      pipe(
+        MARKER_NAMES,
+        Arr.sortWith((name) => name, Order.String),
+      ),
+    ]);
   });
 
   it("存在する名前なら型のエラーにならず、無い名前はエラーになる", () => {
-    expect({ known: report().errors.known, unknown: report().errors.unknown }).toStrictEqual({
-      known: [],
-      unknown: [expect.stringContaining('"Drums"')],
-    });
+    expect(probe().errors).toStrictEqual([
+      expect.stringContaining('"Drums"'),
+      expect.stringContaining('"Gm8"'),
+      expect.stringContaining('""'),
+      expect.stringContaining('""'),
+    ]);
   });
+});
 
-  it("並びの番号でトラックを取ると、名前がその文字列のリテラルの型になる", () => {
+describe("import した .rpp の tracks と markers", () => {
+  it("並びの番号や名前で取ると、名前と時刻がリテラルの型になる", () => {
     const [midi, , drums] = song.tracks;
+    const [, cm9, gm9] = song.markers;
     expectTypeOf(midi.name).toEqualTypeOf<"Midi GM">();
     expectTypeOf(trackNamed(song, "Drums   (BB)")).toEqualTypeOf(drums);
+    expectTypeOf(markerNamed(song, "Cm9").time).toEqualTypeOf<typeof CM9_TIME>();
+    expectTypeOf(markerNamed(song, "Cm9")).toEqualTypeOf(cm9);
+    expectTypeOf(gm9.name).toEqualTypeOf<"Gm9">();
+  });
+
+  it("マーカーは 25 個とも時刻の順に残り、同じ名前のものを全部引ける", () => {
+    expect({
+      count: song.markers.length,
+      gm9: pipe(
+        markersNamed(song, "Gm9"),
+        Arr.map(({ time }) => ({ time })),
+      ),
+    }).toStrictEqual({
+      count: MARKER_COUNT,
+      gm9: [
+        { time: 0 },
+        { time: 24 },
+        { time: 56 },
+        { time: 72 },
+        { time: 104 },
+        { time: 120 },
+        { time: 152 },
+      ],
+    });
   });
 });

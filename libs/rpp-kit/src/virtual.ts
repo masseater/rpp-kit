@@ -61,11 +61,11 @@ const markerSegments = ({ markers }: SongOutline): readonly Segment[] =>
   pipe(
     markers,
     Arr.flatMap(({ marker, name, time }) => [
-      text("    readonly "),
+      text("    Marker & { readonly name: "),
       ...keyOf(name, marker.name),
-      text(": Marker & { readonly time: "),
+      text("; readonly time: "),
       literalOf({ value: marker.time, param: time }),
-      text(" };\n"),
+      text(" },\n"),
     ]),
   );
 
@@ -95,11 +95,11 @@ const segmentsOf = ({ outline, missing }: VirtualInput): readonly Segment[] => [
   text("declare const song: {\n"),
   ...tempoSegments(outline),
   text(
-    `  readonly tempoMap: readonly TempoPoint[];\n  readonly sampleRate: ${String(outline.song.sampleRate)};\n  readonly length: number;\n  readonly markers: {\n`,
+    `  readonly tempoMap: readonly TempoPoint[];\n  readonly sampleRate: ${String(outline.song.sampleRate)};\n  readonly length: number;\n  readonly markers: readonly [\n`,
   ),
   ...markerSegments(outline),
   text(
-    "  };\n  readonly regions: readonly Region[];\n  readonly sections: readonly Section[];\n  readonly tracks: readonly [\n",
+    "  ];\n  readonly regions: readonly Region[];\n  readonly sections: readonly Section[];\n  readonly tracks: readonly [\n",
   ),
   ...trackSegments(outline),
   text("  ];\n};\nexport { song };\nexport default song;\n"),

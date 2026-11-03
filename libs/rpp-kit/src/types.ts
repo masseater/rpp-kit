@@ -31,7 +31,7 @@ type Song = Readonly<{
   tempoMap: readonly TempoPoint[];
   sampleRate: number;
   length: number;
-  markers: Readonly<Record<string, Marker>>;
+  markers: readonly Marker[];
   regions: readonly Region[];
   sections: readonly Section[];
   tracks: readonly Track[];
