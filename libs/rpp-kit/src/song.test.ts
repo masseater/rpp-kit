@@ -3,7 +3,7 @@ import { expect, test } from "vite-plus/test";
 
 import type { SongOutline } from "./outline.ts";
 import { parseRpp } from "./parse.ts";
-import { readSong, trackNamed, tracksNamed } from "./read.ts";
+import { markerNamed, markersNamed, readSong, trackNamed, tracksNamed } from "./read.ts";
 import { fromSong, songOf } from "./song.fixture.ts";
 import { outlineSong } from "./song.ts";
 import { renderSegments, segmentsOf } from "./virtual.ts";
@@ -73,7 +73,9 @@ const atomsOf = (segments: readonly Segment[]): readonly string[] =>
 test("テンポとマーカー名を、.rpp の文字に対応づけたリテラル型にする", () => {
   const code = render(segmentsOf({ outline: outline(), missing: [] }));
   expect(code).toContain("readonly bpm: 120; readonly numerator: 3; readonly denominator: 4");
-  expect(code).toContain('readonly "Intro": Marker & { readonly time: 0.000000 }');
+  expect(code).toContain(
+    'readonly markers: readonly [\n    Marker & { readonly name: "Intro"; readonly time: 0.000000 },\n    Marker & { readonly name: "Big Chorus"; readonly time: 4.000000 },\n  ];',
+  );
   expect(code).toContain(
     'readonly tracks: readonly [\n    Track & { readonly index: 0; readonly name: "Keys" },\n    Track & { readonly index: 1; readonly name: "Vocal" },\n  ];',
   );
@@ -99,8 +101,9 @@ test("テンポと拍子とサンプルレートを読む", () => {
 });
 
 test("マーカーを名前で引け、区間は次のマーカーか曲の終わりまで続く", () => {
-  expect(readSong(SMALL_RPP)).toMatchObject({
-    markers: { "Big Chorus": { id: 2, name: "Big Chorus", time: 4 } },
+  const song = readSong(SMALL_RPP);
+  expect(markerNamed(song, "Big Chorus")).toStrictEqual({ id: 2, name: "Big Chorus", time: 4 });
+  expect(song).toMatchObject({
     sections: [
       { name: "Intro", start: 0, end: 4 },
       { name: "Big Chorus", start: 4, end: 8 },
@@ -144,11 +147,26 @@ test("閉じていないチャンクは、開いた位置をエラーにする",
   });
 });
 
-test("同じ名前のマーカーは最初のものを名前で引け、区間には全部残る", () => {
+test("同じ名前のマーカーも全部残り、時刻の順に並び、名前で最初のものと全部を引ける", () => {
   const source =
-    "<REAPER_PROJECT 0.1 7.0 0\n  TEMPO 120 4 4\n  MARKER 1 0 Am7 0\n  MARKER 2 2 G7 0\n  MARKER 3 4 Am7 0\n>\n";
-  expect(readSong(source)).toMatchObject({
-    markers: { Am7: { id: 1, time: 0 }, G7: { id: 2, time: 2 } },
+    "<REAPER_PROJECT 0.1 7.0 0\n  TEMPO 120 4 4\n  MARKER 3 4 Am7 0\n  MARKER 1 0 Am7 0\n  MARKER 2 2 G7 0\n>\n";
+  const song = readSong(source);
+  expect({
+    first: markerNamed(song, "Am7"),
+    all: pipe(song, markersNamed("Am7")),
+  }).toStrictEqual({
+    first: { id: 1, name: "Am7", time: 0 },
+    all: [
+      { id: 1, name: "Am7", time: 0 },
+      { id: 3, name: "Am7", time: 4 },
+    ],
+  });
+  expect(song).toMatchObject({
+    markers: [
+      { id: 1, time: 0 },
+      { id: 2, time: 2 },
+      { id: 3, time: 4 },
+    ],
     sections: [
       { name: "Am7", start: 0, end: 2 },
       { name: "G7", start: 2, end: 4 },
@@ -163,7 +181,7 @@ test("リージョンは始まりと終わりの行を id で組にし、マー�
       { id: 1, name: "Intro", start: 0, end: 4 },
       { id: 2, name: "Verse", start: 4, end: 8 },
     ],
-    markers: { Drop: { id: 3, name: "Drop", time: 10 } },
+    markers: [{ id: 3, name: "Drop", time: 10 }],
     sections: [
       { name: "Intro", start: 0, end: 4 },
       { name: "Verse", start: 4, end: 8 },
@@ -175,7 +193,10 @@ test("名前の無いマーカーは、前の区間を切るが、マーカー�
     '<REAPER_PROJECT 0.1 7.0 0\n  MARKER 1 0 Am 0\n  MARKER 2 2 "" 0\n  MARKER 3 4 Em 0\n>\n';
   expect(readSong(source)).toStrictEqual(
     expect.objectContaining({
-      markers: { Am: { id: 1, name: "Am", time: 0 }, Em: { id: 3, name: "Em", time: 4 } },
+      markers: [
+        { id: 1, name: "Am", time: 0 },
+        { id: 3, name: "Em", time: 4 },
+      ],
       sections: [
         { name: "Am", start: 0, end: 2 },
         { name: "Em", start: 4, end: 4 },

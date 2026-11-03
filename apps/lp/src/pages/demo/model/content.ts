@@ -35,12 +35,13 @@ const playground = {
 const bpm: 120 = song.tempo.bpm;
 console.log("BPM", bpm);
 
-for (const [name, marker] of Object.entries(song.markers)) {
-  console.log(name, marker.time);
+for (const marker of song.markers) {
+  console.log(marker.name, marker.time);
 }
 
-const cm9: 16 = song.markers.Cm9.time;
-console.log("Cm9", cm9);
+const [, cm9] = song.markers;
+const time: 16 = cm9.time;
+console.log(cm9.name, time);
 `,
 };
 
