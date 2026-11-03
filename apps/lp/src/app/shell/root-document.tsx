@@ -1,3 +1,4 @@
+import { RegistryProvider } from "@effect/atom-react";
 import { HeadContent, Scripts } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
@@ -8,7 +9,7 @@ const RootDocument = ({ children }: Readonly<{ children: ReactNode }>): ReactNod
       <HeadContent />
     </head>
     <body>
-      {children}
+      <RegistryProvider>{children}</RegistryProvider>
       <Scripts />
     </body>
   </html>

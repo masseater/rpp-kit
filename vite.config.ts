@@ -244,6 +244,7 @@ export default defineConfig({
         },
         dependsOn: [
           "test-all",
+          "mapper-typecheck",
           "syncpack",
           "markdown-lint",
           "renovate",
@@ -255,6 +256,7 @@ export default defineConfig({
         ],
       },
       "test-all": "vp run -r test",
+      "mapper-typecheck": "vp run --filter lp typecheck",
       syncpack: "syncpack lint",
       "steiger-all": "vp run -r steiger",
       "db-check-all": "vp run -r db:check",

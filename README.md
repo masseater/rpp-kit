@@ -1,22 +1,22 @@
-# typescript-template
+# rpp-kit
 
-Cloudflare で動く TypeScript の Web アプリを、検査・CI・デプロイ・AI エージェントとの作業の決まりが
-そろった状態から始めるための GitHub テンプレートである。
-新しいリポジトリを作るたびに、lint や CI やデプロイの仕組みを組み直さずに済む。
+REAPER のプロジェクトファイル（`.rpp`）を、MIDI へ書き出さずに TypeScript から直接読むためのキットである。
+`import { song } from "./song.rpp"` と書くと、テンポ・マーカー・トラック・MIDI のノートがそのまま値として手に入る。
+
+- `libs/rpp-kit` は `.rpp` のパーサーと、それを使う Vite プラグイン（`rpp-kit/vite`）と、
+  TypeScript 7.1 の content mapper を持つ。
+- content mapper を有効にすると、マーカー名やテンポがリテラル型になり、
+  `song.markers.Chorus9` のような無いマーカーは型エラーになる。
+  `.rpp` が参照する音声ファイルが無ければ、そのファイル名の行がエラーになる。
+- `apps/lp` はデモのページである。ai-produced で作った曲の `.rpp` を読み込み、
+  セクションとノートを並べて鳴らす。
+
+content mapper は TypeScript 7.1 のベータ版の機能で、`tsc --runExternalCode` で使う。
+oxlint の型検査はまだ対応していないので、`vp check` には `.d.rpp.ts` の型を渡している。
 
 ## 公開先
 
-- テンプレートのままのアプリ: <https://typescript-template-web-production-ntesuocc46gilfjl.masseater.workers.dev>
-- 静的な LP の見本: <https://typescript-template-landingpagjng25skxokz4cknxsbi3m7nu.masseater.workers.dev>
-
-## 始めたときに入っているもの
-
-- TanStack Start と Effect で書く Web アプリ。D1 のデータベースと better-auth のログインを使える
-- 型検査・lint・テスト・依存の監査を 1 回で流す `vp run verify`
-- main に push すると、verify が通ったあとに Cloudflare へデプロイする GitHub Actions
-- Claude Code で作業するときのフックと作業の決まり
-
-`apps/lp` は公開ページの見本の LP である。ビルド時に作った HTML を、Worker を通さずに配る。
+- デモ: デプロイ後に追記する
 
 ## 使い方
 

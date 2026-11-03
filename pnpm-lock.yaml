@@ -467,6 +467,9 @@ importers:
 
   apps/lp:
     dependencies:
+      '@effect/atom-react':
+        specifier: catalog:stack
+        version: 4.0.7(effect@4.0.7)(react@19.3.1)(scheduler@0.28.0)
       '@tanstack/react-router':
         specifier: 1.170.46
         version: 1.170.46(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -510,6 +513,9 @@ importers:
       node-html-parser:
         specifier: 9.0.6
         version: 9.0.6
+      rpp-kit:
+        specifier: workspace:*
+        version: link:../../libs/rpp-kit
       steiger:
         specifier: catalog:stack
         version: 0.8.1(typescript@7.1.0-beta)(vitest@5.0.5)
@@ -686,6 +692,28 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
+
+  libs/rpp-kit:
+    dependencies:
+      '@effect/platform-node':
+        specifier: 'catalog:'
+        version: 4.0.7(effect@4.0.7)(redis@6.2.1(@opentelemetry/api@1.9.1))
+      effect:
+        specifier: 4.0.7
+        version: 4.0.7
+      ts-content-mapper:
+        specifier: 0.1.1
+        version: 0.1.1
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.6
+      typescript:
+        specifier: catalog:stack
+        version: 7.1.0-beta
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.4.0(@opentelemetry/api@1.9.1)(@types/node@26.6.6)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
   libs/security-headers:
     dependencies:
@@ -9924,6 +9952,10 @@ packages:
     peerDependencies:
       typescript: '>=4.8.4'
 
+  ts-content-mapper@0.1.1:
+    resolution: {integrity: sha512-Lkci00riJ6+7cPxwhC6ENLTVEcT8vXb0zFeatJQ1fQInkcS0HWDyN/zE/SKWRxNHW7mev3OURfMUbUA+F3+WCA==}
+    engines: {node: ^22.18.0 || >=24.11.0}
+
   ts-pattern@5.9.2:
     resolution: {integrity: sha512-qAf+7M7Jjk7uebZeIo9uEzyintfuRtgHdzM9dqxRKcMi2dt76Ec+FH2wW3bnU9TuGLkZIJLoLs7cCQnU7Tu8ig==}
 
@@ -10281,6 +10313,10 @@ packages:
 
   vscode-css-languageservice@6.3.10:
     resolution: {integrity: sha512-eq5N9Er3fC4vA9zd9EFhyBG90wtCCuXgRSpAndaOgXMh1Wgep5lBgRIeDgjZBW9pa+332yC9+49cZMW8jcL3MA==}
+
+  vscode-jsonrpc@10.0.0:
+    resolution: {integrity: sha512-USSfxg0vDIpTQqlQBGxF3mBARyoS8cU7LHLpbYNh6dOJt32dlskxPWB0Irrh5TllTmyf7oNLAvqDqzklbwwnpA==}
+    engines: {node: '>=14.17.0'}
 
   vscode-languageserver-textdocument@1.0.15:
     resolution: {integrity: sha512-Gsfr9S8LU3S6885cS+NaleasJ0n3V5y/SOTqHCifQiXWFw3G9w9/YItDfwHrlCz+dSZWWZ8ilYVMcJe7Sz7Sxw==}
@@ -21004,6 +21040,10 @@ snapshots:
     dependencies:
       typescript: 6.0.3
 
+  ts-content-mapper@0.1.1:
+    dependencies:
+      vscode-jsonrpc: 10.0.0
+
   ts-pattern@5.9.2: {}
 
   tsconfck@3.1.6(typescript@7.1.0-beta):
@@ -21649,6 +21689,8 @@ snapshots:
       vscode-languageserver-textdocument: 1.0.15
       vscode-languageserver-types: 3.17.5
       vscode-uri: 3.2.0
+
+  vscode-jsonrpc@10.0.0: {}
 
   vscode-languageserver-textdocument@1.0.15: {}
 

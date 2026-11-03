@@ -8,12 +8,13 @@
   },
   "scripts": {
     "build": "vp build",
-    "typecheck": "tsc",
+    "typecheck": "tsc --runExternalCode",
     "test": "vp test run --passWithNoTests",
     "steiger": "steiger ./src",
     "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet"
   },
   "dependencies": {
+    "@effect/atom-react": "catalog:stack",
     "@tanstack/react-router": "1.170.46",
     "effect": "catalog:stack",
     "react": "19.3.1",
@@ -30,6 +31,7 @@
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "catalog:",
     "node-html-parser": "9.0.6",
+    "rpp-kit": "workspace:*",
     "steiger": "catalog:stack",
     "typescript": "catalog:stack",
     "vite": "catalog:",

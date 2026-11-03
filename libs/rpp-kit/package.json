@@ -1,0 +1,34 @@
+{
+  "name": "rpp-kit",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./vite": "./src/vite.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc",
+    "test": "vp test run"
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "effect": "catalog:stack",
+    "ts-content-mapper": "0.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  },
+  "typescript": {
+    "contentMapper": {
+      "compilerOptions": [],
+      "dynamicConfig": false,
+      "exec": [
+        "node",
+        "src/mapper.ts"
+      ]
+    }
+  }
+}

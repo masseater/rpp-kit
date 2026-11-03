@@ -9,6 +9,14 @@
   --card: oklch(1 0 0);
   --border: oklch(0.928 0.006 264.531);
   --radius: 0.75rem;
+  --track-1: oklch(0.586 0.253 17.585);
+  --track-2: oklch(0.705 0.213 47.604);
+  --track-3: oklch(0.795 0.184 86.047);
+  --track-4: oklch(0.723 0.219 149.579);
+  --track-5: oklch(0.715 0.143 215.221);
+  --track-6: oklch(0.623 0.214 259.815);
+  --track-7: oklch(0.606 0.25 292.717);
+  --track-8: oklch(0.656 0.241 354.308);
 }
 
 @theme inline {
@@ -20,6 +28,14 @@
   --color-card: var(--card);
   --color-border: var(--border);
   --radius-lg: var(--radius);
+  --color-track-1: var(--track-1);
+  --color-track-2: var(--track-2);
+  --color-track-3: var(--track-3);
+  --color-track-4: var(--track-4);
+  --color-track-5: var(--track-5);
+  --color-track-6: var(--track-6);
+  --color-track-7: var(--track-7);
+  --color-track-8: var(--track-8);
 }
 
 @layer base {

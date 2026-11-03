@@ -3,7 +3,7 @@ import { Secret } from "@alchemy.run/fly";
 import { Stack, isResourceOfType } from "alchemy";
 import { Array as Arr, Effect, Match, Option, Record, Schema, String, pipe } from "effect";
 
-const APP_NAME = "typescript-template";
+const APP_NAME = "rpp-kit";
 
 const PREFIX = `${APP_NAME}-`;
 

@@ -10,7 +10,7 @@ const Route = createRootRoute({
   head: () => ({
     meta: [
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "typescript-template" },
+      { title: "rpp-kit" },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
     scripts: pipe(
