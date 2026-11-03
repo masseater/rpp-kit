@@ -107,6 +107,10 @@ export default defineConfig({
           allow: [
             { from: "lib", name: "Request" },
             { from: "lib", name: "Response" },
+            { from: "lib", name: ["HTMLElement", "HTMLDivElement"] },
+            { from: "package", package: "@codemirror/view", name: "EditorView" },
+            { from: "package", package: "@codemirror/state", name: "Extension" },
+            { from: "package", package: "@valtown/codemirror-ts", name: "WorkerShape" },
             {
               from: "package",
               package: "@cloudflare/workers-types",

@@ -2,17 +2,9 @@ import { Array as Arr, Match, Option, Order, Record as Rec, pipe } from "effect"
 
 import { midiNotes } from "./midi.ts";
 import { PARAM_INDEX, ZERO, chunksOf, linesOf, numberOr, paramOf, textOf } from "./nodes.ts";
+import type { MarkerOutline, SongOutline, Spanned, TrackOutline } from "./outline.ts";
 import type { Chunk, Param } from "./parse.ts";
-import type {
-  Item,
-  Marker,
-  MarkerOutline,
-  Section,
-  SongOutline,
-  Source,
-  Spanned,
-  TrackOutline,
-} from "./types.ts";
+import type { Item, Marker, Section, Source } from "./types.ts";
 
 type Placed = Readonly<{ chunk: Chunk; secondsPerQuarter: number }>;
 

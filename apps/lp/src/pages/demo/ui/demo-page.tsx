@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
 import { Arrangement } from "./arrangement";
-import { CodeSample } from "./code-sample";
 import { Hero } from "./hero";
+import { Playground } from "./playground";
 import { SongCredit } from "./song-credit";
 
 const DemoPage = (): ReactNode => (
@@ -10,7 +10,7 @@ const DemoPage = (): ReactNode => (
     <Hero />
     <Arrangement />
     <SongCredit />
-    <CodeSample />
+    <Playground />
   </main>
 );
 

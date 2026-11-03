@@ -1,11 +1,11 @@
 import { Array as Arr, Match, pipe, String as Str } from "effect";
 import { expect, test } from "vite-plus/test";
 
+import type { SongOutline } from "./outline.ts";
 import { parseRpp } from "./parse.ts";
 import { readSong } from "./read.ts";
 import { outlineSong } from "./song.ts";
-import type { SongOutline } from "./types.ts";
-import { segmentsOf } from "./virtual.ts";
+import { renderSegments, segmentsOf } from "./virtual.ts";
 import type { Segment } from "./virtual.ts";
 
 const SMALL_RPP = `
@@ -54,20 +54,7 @@ const sourceOf = ({ start, end }: Readonly<{ start: number; end: number }>): str
   pipe(SMALL_RPP, Str.slice(start, end));
 
 const render = (segments: readonly Segment[]): string =>
-  pipe(
-    segments,
-    Arr.map((segment) =>
-      Match.value(segment).pipe(
-        Match.discriminatorsExhaustive("kind")({
-          text: ({ text }) => text,
-          verbatim: sourceOf,
-          alias: ({ text }) => text,
-          atom: ({ text }) => text,
-        }),
-      ),
-    ),
-    Arr.join(""),
-  );
+  renderSegments({ content: SMALL_RPP, segments });
 
 const atomsOf = (segments: readonly Segment[]): readonly string[] =>
   pipe(

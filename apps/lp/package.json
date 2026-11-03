@@ -14,13 +14,24 @@
     "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet"
   },
   "dependencies": {
+    "@codemirror/autocomplete": "catalog:",
+    "@codemirror/lang-javascript": "catalog:",
+    "@codemirror/lint": "catalog:",
+    "@codemirror/state": "catalog:",
+    "@codemirror/view": "catalog:",
     "@effect/atom-react": "catalog:stack",
     "@tanstack/react-router": "1.170.46",
+    "@typescript/vfs": "catalog:",
+    "@valtown/codemirror-ts": "catalog:",
+    "codemirror": "catalog:",
+    "comlink": "catalog:",
     "effect": "catalog:stack",
     "react": "19.3.1",
     "react-dom": "19.3.1",
+    "rpp-kit": "workspace:*",
     "security-headers": "workspace:*",
-    "tailwindcss": "catalog:stack"
+    "tailwindcss": "catalog:stack",
+    "typescript-6": "catalog:"
   },
   "devDependencies": {
     "@effect/platform-node": "catalog:",
@@ -31,7 +42,6 @@
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "catalog:",
     "node-html-parser": "9.0.6",
-    "rpp-kit": "workspace:*",
     "steiger": "catalog:stack",
     "typescript": "catalog:stack",
     "vite": "catalog:",
