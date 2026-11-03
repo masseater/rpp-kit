@@ -15,8 +15,17 @@ type Section = Readonly<{ name: string; start: number; end: number }>;
 
 type Tempo = Readonly<{ bpm: number; numerator: number; denominator: number }>;
 
+type TempoPoint = Readonly<{
+  time: number;
+  bpm: number;
+  numerator: number;
+  denominator: number;
+  shape: "square" | "linear";
+}>;
+
 type Song = Readonly<{
   tempo: Tempo;
+  tempoMap: readonly TempoPoint[];
   sampleRate: number;
   length: number;
   markers: Readonly<Record<string, Marker>>;
@@ -25,4 +34,4 @@ type Song = Readonly<{
   trackOrder: readonly string[];
 }>;
 
-export type { Item, Marker, Note, Section, Song, Source, Tempo, Track };
+export type { Item, Marker, Note, Section, Song, Source, Tempo, TempoPoint, Track };

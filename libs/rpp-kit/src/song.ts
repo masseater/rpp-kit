@@ -2,15 +2,15 @@ import { Array as Arr, Match, Option, Order, Record as Rec, pipe } from "effect"
 
 import { midiNotes } from "./midi.ts";
 import { PARAM_INDEX, ZERO, chunksOf, linesOf, numberOr, paramOf, textOf } from "./nodes.ts";
-import type { MarkerOutline, SongOutline, Spanned, TrackOutline } from "./outline.ts";
+import type { MarkerOutline, SongOutline, TrackOutline } from "./outline.ts";
 import type { Chunk, Param } from "./parse.ts";
-import type { Item, Marker, Section, Source } from "./types.ts";
+import { tempoMapOf } from "./tempo.ts";
+import type { TempoMap } from "./tempo.ts";
+import type { Item, Marker, Note, Section, Source } from "./types.ts";
 
-type Placed = Readonly<{ chunk: Chunk; secondsPerQuarter: number }>;
+type Placed = Readonly<{ chunk: Chunk; tempo: TempoMap }>;
 
-const DEFAULTS = { bpm: 120, numerator: 4, denominator: 4, sampleRate: 44_100 } as const;
-
-const SECONDS_PER_MINUTE = 60;
+const DEFAULT_SAMPLE_RATE = 44_100;
 
 const NEXT = 1;
 
@@ -19,11 +19,27 @@ const NO_SOURCE: Source = { kind: "other", type: "" };
 const firstParam = (chunk: Chunk, token: string): Option.Option<Param> =>
   paramOf({ chunk, token, index: PARAM_INDEX.first });
 
-const sourceOf = (source: Chunk, position: number, secondsPerQuarter: number): Source =>
+const placedNotes = (source: Chunk, position: number, tempo: TempoMap): readonly Note[] => {
+  const base = tempo.beatAt(position);
+  return pipe(
+    midiNotes(source),
+    Arr.map(({ pitch, velocity, start, end }) => {
+      const startTime = tempo.secondsAt(base + start);
+      return {
+        pitch,
+        velocity,
+        start: startTime,
+        duration: tempo.secondsAt(base + end) - startTime,
+      };
+    }),
+  );
+};
+
+const sourceOf = (source: Chunk, position: number, tempo: TempoMap): Source =>
   Match.value(textOf(Arr.get(source.params, PARAM_INDEX.first))).pipe(
     Match.when("MIDI", (): Source => ({
       kind: "midi",
-      notes: midiNotes({ source, position, secondsPerQuarter }),
+      notes: placedNotes(source, position, tempo),
     })),
     Match.orElse((type): Source =>
       Option.match(firstParam(source, "FILE"), {
@@ -33,7 +49,7 @@ const sourceOf = (source: Chunk, position: number, secondsPerQuarter: number): S
     ),
   );
 
-const readItem = ({ chunk, secondsPerQuarter }: Placed): Item => {
+const readItem = ({ chunk, tempo }: Placed): Item => {
   const position = numberOr(ZERO)(firstParam(chunk, "POSITION"));
   return {
     name: textOf(firstParam(chunk, "NAME")),
@@ -41,7 +57,7 @@ const readItem = ({ chunk, secondsPerQuarter }: Placed): Item => {
     length: numberOr(ZERO)(firstParam(chunk, "LENGTH")),
     source: Option.match(Arr.head(chunksOf({ chunk, token: "SOURCE" })), {
       onNone: () => NO_SOURCE,
-      onSome: (source) => sourceOf(source, position, secondsPerQuarter),
+      onSome: (source) => sourceOf(source, position, tempo),
     }),
   };
 };
@@ -65,14 +81,14 @@ const markersOf = (root: Chunk): readonly MarkerOutline[] =>
     }),
   );
 
-const tracksOf = ({ chunk: root, secondsPerQuarter }: Placed): readonly TrackOutline[] =>
+const tracksOf = ({ chunk: root, tempo }: Placed): readonly TrackOutline[] =>
   pipe(
     chunksOf({ chunk: root, token: "TRACK" }),
     Arr.map((chunk) => {
       const name = firstParam(chunk, "NAME");
       const items = pipe(
         chunksOf({ chunk, token: "ITEM" }),
-        Arr.map((item) => readItem({ chunk: item, secondsPerQuarter })),
+        Arr.map((item) => readItem({ chunk: item, tempo })),
       );
       return { track: { name: textOf(name), items }, name };
     }),
@@ -108,25 +124,11 @@ const lengthOf = (markers: readonly MarkerOutline[], tracks: readonly TrackOutli
   return Math.max(ZERO, ...itemEnds, ...markerTimes);
 };
 
-const tempoOf = (root: Chunk): SongOutline["tempo"] => {
-  const spanned = (index: number, fallback: number): Spanned => {
-    const param = paramOf({ chunk: root, token: "TEMPO", index });
-    return { value: numberOr(fallback)(param), param };
-  };
-  return {
-    bpm: spanned(PARAM_INDEX.first, DEFAULTS.bpm),
-    numerator: spanned(PARAM_INDEX.second, DEFAULTS.numerator),
-    denominator: spanned(PARAM_INDEX.third, DEFAULTS.denominator),
-  };
-};
-
 const outlineSong = (root: Chunk): SongOutline => {
-  const tempo = tempoOf(root);
+  const tempoMap = tempoMapOf(root);
+  const tempo = tempoMap.outline;
   const allMarkers = markersOf(root);
-  const allTracks = tracksOf({
-    chunk: root,
-    secondsPerQuarter: SECONDS_PER_MINUTE / tempo.bpm.value,
-  });
+  const allTracks = tracksOf({ chunk: root, tempo: tempoMap });
   const length = lengthOf(allMarkers, allTracks);
   const markers = Arr.dedupeWith(
     allMarkers,
@@ -139,7 +141,8 @@ const outlineSong = (root: Chunk): SongOutline => {
       numerator: tempo.numerator.value,
       denominator: tempo.denominator.value,
     },
-    sampleRate: numberOr(DEFAULTS.sampleRate)(firstParam(root, "SAMPLERATE")),
+    tempoMap: tempoMap.points,
+    sampleRate: numberOr(DEFAULT_SAMPLE_RATE)(firstParam(root, "SAMPLERATE")),
     length,
     markers: pipe(
       markers,
