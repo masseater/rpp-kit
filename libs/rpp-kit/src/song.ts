@@ -82,7 +82,7 @@ const outlineSong = (root: Chunk): SongOutline => {
       Rec.fromEntries,
     ),
     regions: timeline.regions,
-    sections: sectionsOf({ markers: timeline.markers, length }),
+    sections: sectionsOf({ timeline, length }),
     tracks: pipe(
       tracks,
       Arr.map(({ track }) => [track.name, track] as const),
