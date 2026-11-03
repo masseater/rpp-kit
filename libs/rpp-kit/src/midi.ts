@@ -5,6 +5,8 @@ import type { Chunk, Line, Node, Param } from "./parse.ts";
 
 type SourceNote = Readonly<{ pitch: number; velocity: number; start: number; end: number }>;
 
+type MidiClip = Readonly<{ notes: readonly SourceNote[]; length: number }>;
+
 type Pending = Readonly<{ start: number; velocity: number }>;
 
 type Event = Readonly<{ ticks: number; kind: number; pitch: number; velocity: number }>;
@@ -99,13 +101,17 @@ const timedEvents = (source: Chunk): readonly Timed[] => {
   }));
 };
 
-const midiNotes = (source: Chunk): readonly SourceNote[] => {
+const midiNotes = (source: Chunk): MidiClip => {
+  const timed = timedEvents(source);
   let state: MidiState = { open: {}, notes: [] };
-  for (const timed of timedEvents(source)) {
-    state = apply(timed)(state);
+  for (const event of timed) {
+    state = apply(event)(state);
   }
-  return Arr.sortWith(state.notes, (note) => note, byStart);
+  return {
+    notes: Arr.sortWith(state.notes, (note) => note, byStart),
+    length: Option.match(Arr.last(timed), { onNone: () => ZERO, onSome: ({ beat }) => beat }),
+  };
 };
 
 export { midiNotes };
-export type { SourceNote };
+export type { MidiClip, SourceNote };

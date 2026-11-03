@@ -1,69 +1,13 @@
-import { Array as Arr, Effect, Match, Option, Record as Rec, Schema, pipe } from "effect";
+import { Function as Fn } from "effect";
 import { expect, test } from "vite-plus/test";
 
 import { readSong } from "./read.ts";
-import { fixtureText, songOf } from "./song.fixture.ts";
-import type { Song } from "./types.ts";
-
-const TOLERANCE = 0.001;
-
-const TruthNote = Schema.Struct({ pitch: Schema.Finite, start: Schema.Finite, end: Schema.Finite });
-
-const TruthTrack = Schema.Struct({ name: Schema.String, notes: Schema.Array(TruthNote) });
-
-const Truth = Schema.fromJsonString(Schema.Array(TruthTrack));
-
-type Played = typeof TruthNote.Type;
-
-const near = (left: number, right: number): boolean => Math.abs(left - right) <= TOLERANCE;
-
-const playedOf = (song: Song, name: string): readonly Played[] =>
-  pipe(
-    Rec.get(song.tracks, name),
-    Option.map((track) => track.items),
-    Option.getOrElse(() => []),
-    Arr.flatMap(({ source }) =>
-      Match.value(source).pipe(
-        Match.when({ kind: "midi" }, (midi) => midi.notes),
-        Match.orElse(() => []),
-      ),
-    ),
-    Arr.map(({ pitch, start, duration }) => ({ pitch, start, end: start + duration })),
-  );
-
-const differs = ([expected, actual]: readonly [Played, Played]): boolean =>
-  expected.pitch !== actual.pitch ||
-  !near(expected.start, actual.start) ||
-  !near(expected.end, actual.end);
-
-const mismatchesOf = Effect.fn("mismatchesOf")(function* mismatchesOf(
-  rpp: string,
-  truthFile: string,
-) {
-  const song = readSong(yield* Effect.promise(() => fixtureText(rpp)));
-  const truth = yield* Schema.decodeEffect(Truth)(
-    yield* Effect.promise(() => fixtureText(truthFile)),
-  );
-  return pipe(
-    truth,
-    Arr.flatMap(({ name, notes }) => {
-      const actual = playedOf(song, name);
-      return Match.value(actual.length === notes.length).pipe(
-        Match.when(false, () => [{ name, expected: notes, actual }]),
-        Match.orElse(() =>
-          pipe(
-            Arr.zip(notes, actual),
-            Arr.filter(differs),
-            Arr.map(([expected, found]) => ({ name, expected: [expected], actual: [found] })),
-          ),
-        ),
-      );
-    }),
-  );
-});
+import { mismatchesOf, songOf } from "./song.fixture.ts";
 
 test("テンポの線の段差となめらかな変化をまたいで、MIDI のノートを秒に直す", () =>
-  expect(Effect.runPromise(mismatchesOf("case_b.rpp", "truth_b.json"))).resolves.toStrictEqual([]));
+  expect(
+    mismatchesOf({ rpp: "case_b.rpp", truth: "truth_b.json", edit: Fn.identity }),
+  ).resolves.toStrictEqual([]));
 
 test("テンポの線があれば、tempo は線の最初の点に合わせ、線を tempoMap に出す", () =>
   expect(songOf("case_b.rpp")).resolves.toMatchObject({
