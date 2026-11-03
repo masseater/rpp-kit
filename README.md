@@ -18,7 +18,7 @@ oxlint の型検査はまだ対応していないので、`vp check` には `.d.
 
 ## 公開先
 
-- デモ: <https://rpp-kit-landingpage-production-crkn2jefseehpb66.masseater.workers.dev>
+- デモ: <https://masseater.dev/rpp-kit/>
 
 ## 使い方
 

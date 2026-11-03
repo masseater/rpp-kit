@@ -48,15 +48,18 @@ const STATIC_PAGE_HEADERS = {
   "Content-Security-Policy": contentSecurityPolicy({ script: [], style: [] }),
 } as const;
 
-const assetHeaders = (pageHeaders: Readonly<Record<string, string>>): string =>
+const assetHeaders = ({
+  page,
+  base = "",
+}: Readonly<{ page: Readonly<Record<string, string>>; base?: string }>): string =>
   pipe(
     [
-      "/*",
+      `${base}/*`,
       ...pipe(
-        Rec.toEntries(pageHeaders),
+        Rec.toEntries(page),
         Arr.map(([name, value]) => `  ${name}: ${value}`),
       ),
-      "/assets/*",
+      `${base}/assets/*`,
       `  Cache-Control: ${ASSET_CACHE_CONTROL}`,
       "",
     ],
