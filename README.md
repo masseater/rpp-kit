@@ -7,6 +7,8 @@ REAPER のプロジェクトファイル（`.rpp`）を、MIDI へ書き出さ�
   TypeScript 7.1 の content mapper を持つ。
 - content mapper を有効にすると、マーカー名やテンポがリテラル型になり、
   `song.markers.Gm8` のような無いマーカーは型エラーになる。
+  `song.tracks` は REAPER での並び順の配列で、同じ名前のトラックも全部残る。
+  `trackNamed(song, "Bass")` と `tracksNamed(song, "Bass")` で名前から引け、無い名前は型エラーになる。
   `.rpp` が参照する音声ファイルが無ければ、そのファイル名の行がエラーになる。
 - `apps/lp` はデモのページである。GPLv3 で公開されているゲーム
   [Timmy Time Adventure](https://github.com/warrior-rockk/timmy-time-adventure)

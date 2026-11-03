@@ -27,11 +27,10 @@ const STEP = 1;
 const byStart = Order.mapInput(Order.Number, ({ note }: Scheduled) => note.start);
 
 const unsorted: readonly Scheduled[] = pipe(
-  song.trackOrder,
-  Arr.flatMap((track) =>
+  song.tracks,
+  Arr.flatMap(({ name: track, items }) =>
     pipe(
-      Option.getOrElse(Option.fromNullishOr(song.tracks[track]), () => ({ name: track, items: [] }))
-        .items,
+      items,
       Arr.flatMap((item) => {
         if (item.source.kind === "midi") {
           return item.source.notes;

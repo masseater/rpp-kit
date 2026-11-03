@@ -1,5 +1,4 @@
-import type { Option } from "effect";
-import { Array as Arr, Record as Rec, pipe } from "effect";
+import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 
 import { innermost, readItem } from "./item.ts";
 import { named, sectionsOf, timelineOf } from "./markers.ts";
@@ -28,13 +27,17 @@ const filesOf = (root: Chunk): readonly Param[] =>
 const tracksOf = ({ chunk: root, tempo }: Placed): readonly TrackOutline[] =>
   pipe(
     chunksOf({ chunk: root, token: "TRACK" }),
-    Arr.map((chunk) => {
+    Arr.map((chunk, index) => {
       const name = firstParam(chunk, "NAME");
       const items = pipe(
         chunksOf({ chunk, token: "ITEM" }),
         Arr.map((item) => readItem({ item, tempo })),
       );
-      return { track: { name: textOf(name), items }, name };
+      const guid = pipe(
+        Arr.get(chunk.params, PARAM_INDEX.first),
+        Option.orElse(() => firstParam(chunk, "TRACKID")),
+      );
+      return { track: { index, guid: textOf(guid), name: textOf(name), items }, name };
     }),
   );
 
@@ -59,14 +62,13 @@ const outlineSong = (root: Chunk): SongOutline => {
   const tempoMap = tempoMapOf(root);
   const tempo = tempoMap.outline;
   const timeline = timelineOf(root);
-  const allTracks = tracksOf({ chunk: root, tempo: tempoMap });
-  const length = lengthOf(timeline, allTracks);
+  const tracks = tracksOf({ chunk: root, tempo: tempoMap });
+  const length = lengthOf(timeline, tracks);
   const markers = pipe(
     timeline.markers,
     Arr.filter(named),
     Arr.dedupeWith((left, right) => left.marker.name === right.marker.name),
   );
-  const tracks = Arr.dedupeWith(allTracks, (left, right) => left.track.name === right.track.name);
   const song = {
     tempo: {
       bpm: tempo.bpm.value,
@@ -85,12 +87,7 @@ const outlineSong = (root: Chunk): SongOutline => {
     sections: sectionsOf({ timeline, length }),
     tracks: pipe(
       tracks,
-      Arr.map(({ track }) => [track.name, track] as const),
-      Rec.fromEntries,
-    ),
-    trackOrder: pipe(
-      tracks,
-      Arr.map(({ track }) => track.name),
+      Arr.map(({ track }) => track),
     ),
   };
   return { song, tempo, markers, tracks, files: filesOf(root) };
