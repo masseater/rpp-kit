@@ -43,13 +43,15 @@ const SMALL_RPP = `
 >
 `;
 
-const outline = (): SongOutline => {
-  const parsed = parseRpp(SMALL_RPP);
+const outlineOf = (source: string): SongOutline => {
+  const parsed = parseRpp(source);
   if (parsed.status === "error") {
     throw new Error(parsed.error.message);
   }
   return outlineSong(parsed.root);
 };
+
+const outline = (): SongOutline => outlineOf(SMALL_RPP);
 
 const sourceOf = ({ start, end }: Readonly<{ start: number; end: number }>): string =>
   pipe(SMALL_RPP, Str.slice(start, end));
@@ -172,4 +174,57 @@ test("名前の無いマーカーは、前の区間を切るが、マーカー�
       ],
     }),
   );
+});
+
+const MEDIA_RPP = `<REAPER_PROJECT 0.1 7.0 0
+  <TRACK
+    NAME Media
+    <ITEM
+      POSITION 0
+      LENGTH 4
+      <SOURCE VIDEO
+        FILE "clip.mp4"
+      >
+    >
+    <ITEM
+      POSITION 4
+      LENGTH 4
+      <SOURCE VIDEO
+        FILE "cover.png"
+      >
+    >
+    <ITEM
+      POSITION 8
+      LENGTH 2
+      <SOURCE SECTION
+        LENGTH 2
+        STARTPOS 1
+        <SOURCE WAVE
+          FILE "loop.wav"
+        >
+      >
+    >
+  >
+>
+`;
+
+test("動画と画像の SOURCE VIDEO は video にし、SECTION は中の SOURCE を読む", () => {
+  expect(readSong(MEDIA_RPP).tracks).toMatchObject({
+    Media: {
+      items: [
+        { source: { kind: "video", file: "clip.mp4" } },
+        { source: { kind: "video", file: "cover.png" } },
+        { source: { kind: "audio", file: "loop.wav" } },
+      ],
+    },
+  });
+});
+
+test("SECTION の中の素材のファイルも、有無を確かめる対象にする", () => {
+  expect(
+    pipe(
+      outlineOf(MEDIA_RPP).files,
+      Arr.map(({ text }) => text),
+    ),
+  ).toStrictEqual(["clip.mp4", "cover.png", "loop.wav"]);
 });
