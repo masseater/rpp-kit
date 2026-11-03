@@ -9,7 +9,7 @@ const SectionButtons = (): ReactNode => (
   <div className="flex flex-wrap gap-1">
     {pipe(
       song.sections,
-      Arr.map((section) => <SectionButton key={section.name} section={section} />),
+      Arr.map((section) => <SectionButton key={section.start} section={section} />),
     )}
   </div>
 );

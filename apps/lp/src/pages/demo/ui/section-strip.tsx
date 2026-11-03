@@ -16,7 +16,7 @@ const SectionStrip = (): ReactNode => (
         <rect
           className={fillOf(index)}
           height="100%"
-          key={section.name}
+          key={section.start}
           width={percentOf(section.end - section.start)}
           x={percentOf(section.start)}
         />
@@ -25,16 +25,17 @@ const SectionStrip = (): ReactNode => (
     {pipe(
       song.sections,
       Arr.map((section) => (
-        <text
-          className="fill-card hidden text-xs sm:block"
-          dominantBaseline="middle"
-          dx={LABEL_OFFSET}
-          key={section.name}
+        <svg
+          className="hidden sm:block"
+          key={section.start}
+          overflow="hidden"
+          width={percentOf(section.end - section.start)}
           x={percentOf(section.start)}
-          y="50%"
         >
-          {section.name}
-        </text>
+          <text className="fill-card text-xs" dominantBaseline="middle" x={LABEL_OFFSET} y="50%">
+            {section.name}
+          </text>
+        </svg>
       )),
     )}
     <Playhead />
