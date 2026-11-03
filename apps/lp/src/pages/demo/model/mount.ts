@@ -1,13 +1,16 @@
 import { Effect, Fiber, Option } from "effect";
 
-import type { playground } from "./content";
+import type { Report } from "./output";
+import type { Panes } from "./playground";
 
-type Pane = keyof typeof playground.panes;
+type Pane = keyof Panes;
+
+type Mount = Readonly<{ container: HTMLDivElement; report: Report }>;
 
 const paneOf = (container: HTMLElement, pane: Pane): Option.Option<HTMLElement> =>
   Option.fromNullishOr(container.querySelector<HTMLElement>(`[data-pane="${pane}"]`));
 
-const mountPlayground = (container: HTMLDivElement): (() => void) => {
+const mountPlayground = ({ container, report }: Mount): (() => void) => {
   const fiber = Effect.runFork(
     Option.all({
       rpp: paneOf(container, "rpp"),
@@ -17,7 +20,7 @@ const mountPlayground = (container: HTMLDivElement): (() => void) => {
       Effect.fromOption,
       Effect.flatMap((panes) =>
         Effect.promise(() => import("./playground")).pipe(
-          Effect.flatMap(({ runPlayground }) => Effect.scoped(runPlayground(panes))),
+          Effect.flatMap(({ runPlayground }) => Effect.scoped(runPlayground({ panes, report }))),
         ),
       ),
     ),
