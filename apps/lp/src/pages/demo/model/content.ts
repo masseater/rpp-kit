@@ -35,6 +35,14 @@ const playground = {
 const bpm: 120 = song.tempo.bpm;
 console.log("BPM", bpm);
 
+const [, bass] = song.tracks;
+for (const item of bass.items) {
+  if (item.source.kind === "midi") {
+    const [first] = item.source.notes;
+    console.log(bass.name, "最初のノート", first?.start, "秒");
+  }
+}
+
 for (const marker of song.markers) {
   console.log(marker.name, marker.time);
 }
