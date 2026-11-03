@@ -1,13 +1,15 @@
-import { Array as Arr, Match, Option, pipe } from "effect";
+import { Array as Arr, Match, Option, String as Str, pipe } from "effect";
 
+import type { SongOutline, Spanned } from "./outline.ts";
 import type { Param } from "./parse.ts";
-import type { SongOutline, Spanned } from "./types.ts";
 
 type Segment =
   | Readonly<{ kind: "text"; text: string }>
   | Readonly<{ kind: "verbatim"; start: number; end: number }>
   | Readonly<{ kind: "alias"; text: string; start: number; end: number }>
   | Readonly<{ kind: "atom"; text: string; start: number; end: number }>;
+
+type Rendering = Readonly<{ content: string; segments: readonly Segment[] }>;
 
 type VirtualInput = Readonly<{ outline: SongOutline; missing: readonly Param[] }>;
 
@@ -111,5 +113,21 @@ const segmentsOf = ({ outline, missing }: VirtualInput): readonly Segment[] => [
   ...missingSegments(missing),
 ];
 
-export { segmentsOf };
-export type { Segment, VirtualInput };
+const renderSegments = ({ content, segments }: Rendering): string =>
+  pipe(
+    segments,
+    Arr.map((segment) =>
+      Match.value(segment).pipe(
+        Match.discriminatorsExhaustive("kind")({
+          text: ({ text: value }) => value,
+          verbatim: ({ start, end }) => pipe(content, Str.slice(start, end)),
+          alias: ({ text: value }) => value,
+          atom: ({ text: value }) => value,
+        }),
+      ),
+    ),
+    Arr.join(""),
+  );
+
+export { renderSegments, segmentsOf };
+export type { Rendering, Segment, VirtualInput };

@@ -1,7 +1,3 @@
-import type { Option } from "effect";
-
-import type { Param } from "./parse.ts";
-
 type Note = Readonly<{ pitch: number; velocity: number; start: number; duration: number }>;
 
 type Source =
@@ -29,35 +25,4 @@ type Song = Readonly<{
   trackOrder: readonly string[];
 }>;
 
-type Spanned = Readonly<{ value: number; param: Option.Option<Param> }>;
-
-type MarkerOutline = Readonly<{
-  marker: Marker;
-  name: Option.Option<Param>;
-  time: Option.Option<Param>;
-}>;
-
-type TrackOutline = Readonly<{ track: Track; name: Option.Option<Param> }>;
-
-type SongOutline = Readonly<{
-  song: Song;
-  tempo: Readonly<{ bpm: Spanned; numerator: Spanned; denominator: Spanned }>;
-  markers: readonly MarkerOutline[];
-  tracks: readonly TrackOutline[];
-  files: readonly Param[];
-}>;
-
-export type {
-  Item,
-  Marker,
-  MarkerOutline,
-  Note,
-  Section,
-  Song,
-  SongOutline,
-  Source,
-  Spanned,
-  Tempo,
-  Track,
-  TrackOutline,
-};
+export type { Item, Marker, Note, Section, Song, Source, Tempo, Track };

@@ -20,6 +20,10 @@
     {
       "matchPackageNames": ["typescript"],
       "allowedVersions": "!/-dev\\./"
+    },
+    {
+      "matchDepNames": ["typescript-6"],
+      "allowedVersions": "<7"
     }
   ],
   "customManagers": [

@@ -16,15 +16,19 @@ const transport = { play: "再生", stop: "停止", bpm: "BPM" };
 
 const lane = { notes: "ノート" };
 
-const typing = {
-  heading: "型も付く",
+const playground = {
+  heading: "書き換えて試す",
+  panes: {
+    rpp: "intro.rpp",
+    main: "main.ts",
+    generated: "TypeScript から見た intro.rpp",
+  },
   usage: `import { song } from "./intro.rpp";
 
 const bpm: 120 = song.tempo.bpm;       // 通る
 const cm9: 16 = song.markers.Cm9.time; // 通る
-song.markers.Gm8;                      // 型エラー`,
-  output: `$ tsc --runExternalCode
-src/main.ts(5,14): error TS2339: Property 'Gm8' does not exist on type '{ readonly Gm9: ... & { readonly time: 0; }; readonly Cm9: ... & { readonly time: 16; }; ... }'.`,
+song.markers.Gm8;                      // 型エラー
+`,
 };
 
-export { credit, hero, lane, transport, typing };
+export { credit, hero, lane, playground, transport };

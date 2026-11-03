@@ -4,7 +4,7 @@
   "typeAware": { "enabled": true, "require": "complete" },
   "failOnParseError": true,
   "ignorePatterns": [".claude/**"],
-  "dynamicallyLoaded": ["**/*.d.rpp.ts"],
+  "dynamicallyLoaded": ["**/*.d.rpp.ts", "**/src/**/*.worker.ts"],
   "audit": { "gate": "all" },
   "security": {
     "categories": {
