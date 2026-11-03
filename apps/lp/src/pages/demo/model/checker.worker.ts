@@ -27,6 +27,7 @@ const OPTIONS: ts.CompilerOptions = {
   module: ts.ModuleKind.ESNext,
   moduleResolution: ts.ModuleResolutionKind.Bundler,
   strict: true,
+  allowArbitraryExtensions: true,
   noEmit: true,
 };
 

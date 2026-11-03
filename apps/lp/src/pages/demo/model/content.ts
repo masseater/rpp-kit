@@ -20,9 +20,10 @@ const playground = {
   panes: {
     rpp: "intro.rpp",
     main: "main.ts",
-    generated: "intro.rpp.ts",
+    generated: "intro.d.rpp.ts",
     console: "コンソール",
   },
+  generatedNote: "自動生成",
   output: {
     pending: "実行中",
     empty: "出力はありません",
