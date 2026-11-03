@@ -18,13 +18,13 @@
       "automerge": false
     },
     {
+      "matchPackageNames": ["typescript"],
+      "allowedVersions": "!/-dev\\./"
+    },
+    {
       "matchDepTypes": ["pnpm.catalog.typescript-api"],
       "matchPackageNames": ["typescript"],
       "allowedVersions": "<7"
-    },
-    {
-      "matchPackageNames": ["typescript"],
-      "allowedVersions": "!/-dev\\./"
     }
   ],
   "customManagers": [
