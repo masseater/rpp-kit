@@ -1,6 +1,7 @@
 import { D1, Website, Workers, providers, state } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import { Stack, makeRandom } from "alchemy";
+import { Build } from "alchemy/Command";
 import { Config, Effect, Hash, Option, Schema } from "effect";
 import { SECURITY_HEADERS, STATIC_PAGE_HEADERS, assetHeaders } from "security-headers";
 
@@ -25,6 +26,12 @@ const OWNED_ZONE = Option.none<string>();
 
 const CF_BEACON_TOKEN = "47d660a773db4bb7a9b283aaf8f080ff";
 
+const SITE_ZONE = "masseater.dev";
+
+const SITE_BASE_PATH = "/rpp-kit";
+
+const SITE_CF_BEACON_TOKEN = "021b4961f3fd419297b186136a5a8a0a";
+
 const web = Effect.gen(function* web() {
   const DB = yield* D1.Database("DB", { migrations: "./drizzle" });
   const BETTER_AUTH_SECRET = yield* makeRandom("BetterAuthSecret");
@@ -43,19 +50,28 @@ const web = Effect.gen(function* web() {
       traces: { enabled: true, headSamplingRate: TRACE_SAMPLING_RATE, persist: true },
     },
     viteEnvironments: { entry: "ssr", children: ["rsc"] },
-    assets: { headers: assetHeaders(SECURITY_HEADERS) },
+    assets: { headers: assetHeaders({ page: SECURITY_HEADERS }) },
   });
 });
 
-const landingPage = Website.StaticSite("LandingPage", {
-  cwd: "../lp",
-  env: { VITE_CF_BEACON_TOKEN: CF_BEACON_TOKEN },
-  command: "vp run build",
-  outdir: "dist/client",
-  compatibility: COMPATIBILITY,
-  logpush: true,
-  assets: { headers: assetHeaders(STATIC_PAGE_HEADERS) },
-  dev: { command: "vp dev" },
+const landingPage = Effect.gen(function* landingPage() {
+  const site = yield* Build("LandingPageBuild", {
+    cwd: "../lp",
+    command: `vp build --base ${SITE_BASE_PATH}/`,
+    env: { VITE_CF_BEACON_TOKEN: SITE_CF_BEACON_TOKEN },
+    outdir: "dist/client",
+    memo: false,
+  });
+  return yield* Workers.Worker("LandingPage", {
+    compatibility: COMPATIBILITY,
+    logpush: true,
+    routes: [{ pattern: `${SITE_ZONE}${SITE_BASE_PATH}*`, zoneName: SITE_ZONE }],
+    assets: {
+      directory: site.outdir,
+      base: SITE_BASE_PATH,
+      headers: assetHeaders({ page: STATIC_PAGE_HEADERS, base: SITE_BASE_PATH }),
+    },
+  });
 });
 
 const ciTelemetry = Effect.gen(function* ciTelemetry() {

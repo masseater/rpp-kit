@@ -4,8 +4,10 @@ import type { Plugin } from "vite-plus";
 
 import { SCRIPT_DIR, externalize } from "./externalize-scripts.ts";
 
+type Target = Readonly<{ outDir: string; base: string }>;
+
 const externalizeFile = Effect.fn("externalizeFile")(function* externalizeFile(
-  outDir: string,
+  { outDir, base }: Target,
   file: string,
 ) {
   const fileSystem = yield* FileSystem.FileSystem;
@@ -14,17 +16,20 @@ const externalizeFile = Effect.fn("externalizeFile")(function* externalizeFile(
   const { html, scripts } = yield* externalize({
     html: yield* fileSystem.readFileString(target),
     file,
+    base,
   });
   yield* pipe(
     scripts,
-    Effect.forEach(({ src, code }) => fileSystem.writeFileString(path.join(outDir, src), code)),
+    Effect.forEach((script) =>
+      fileSystem.writeFileString(path.join(outDir, script.file), script.code),
+    ),
   );
   yield* fileSystem.writeFileString(target, html);
 });
 
 const externalizeAll = Effect.fn("externalizeAll")(function* externalizeAll(
   root: string,
-  outDir: string,
+  { outDir, base }: Target,
 ) {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
@@ -36,14 +41,14 @@ const externalizeAll = Effect.fn("externalizeAll")(function* externalizeAll(
   );
   yield* pipe(
     files,
-    Effect.forEach((file) => externalizeFile(directory, file)),
+    Effect.forEach((file) => externalizeFile({ outDir: directory, base }, file)),
   );
 });
 
-const runInNode = (root: string, outDir: string): Promise<void> =>
+const runInNode = (root: string, target: Target): Promise<void> =>
   Effect.runPromise(
     Layer.build(NodeServices.layer).pipe(
-      Effect.flatMap((context) => Effect.provideContext(externalizeAll(root, outDir), context)),
+      Effect.flatMap((context) => Effect.provideContext(externalizeAll(root, target), context)),
       Effect.scoped,
     ),
   );
@@ -56,7 +61,8 @@ const externalizeInlineScripts = (): Plugin => ({
     handler: ({ environments }) =>
       Option.match(Option.fromNullishOr(environments["client"]), {
         onNone: () => Promise.resolve(),
-        onSome: ({ config }) => runInNode(config.root, config.build.outDir),
+        onSome: ({ config }) =>
+          runInNode(config.root, { outDir: config.build.outDir, base: config.base }),
       }),
   },
 });

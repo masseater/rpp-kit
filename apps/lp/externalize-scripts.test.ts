@@ -8,7 +8,7 @@ const PAGE =
 
 const rewrite = (html: string): Promise<Readonly<{ code: string; src: boolean; html: boolean }>> =>
   Effect.runPromise(
-    externalize({ html, file: "index.html" }).pipe(
+    externalize({ html, file: "index.html", base: "/base/" }).pipe(
       Effect.map(({ html: rewritten, scripts }) => {
         const src = pipe(
           scripts,
@@ -21,7 +21,7 @@ const rewrite = (html: string): Promise<Readonly<{ code: string; src: boolean; h
             Arr.map((script) => script.code),
             Arr.join(" "),
           ),
-          src: /^\/assets\/inline-[0-9a-f]{16}\.js$/u.test(src),
+          src: /^\/base\/assets\/inline-[0-9a-f]{16}\.js$/u.test(src),
           html:
             rewritten ===
             `<html><body><main>hi</main><script src="${src}" data-tsr-stream-part=""></script><script type="module" src="/assets/index.js"></script></body></html>`,
@@ -32,7 +32,10 @@ const rewrite = (html: string): Promise<Readonly<{ code: string; src: boolean; h
 
 const rejects = (html: string): Promise<boolean> =>
   Effect.runPromise(
-    externalize({ html, file: "index.html" }).pipe(Effect.exit, Effect.map(Exit.isFailure)),
+    externalize({ html, file: "index.html", base: "/base/" }).pipe(
+      Effect.exit,
+      Effect.map(Exit.isFailure),
+    ),
   );
 
 test("inline の script を外部ファイルに出し、属性を保ったまま参照に置き換える", () =>

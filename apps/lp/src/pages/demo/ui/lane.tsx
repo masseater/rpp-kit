@@ -33,10 +33,7 @@ const Lane = ({ track, index }: Readonly<{ track: Track; index: number }>): Reac
   if (Arr.isReadonlyArrayEmpty(notes)) {
     return (
       <div className="border-border flex items-stretch border-t">
-        <LaneLabel detail={lane.empty} name={track.name} />
-        <p className="text-muted-foreground flex min-w-0 flex-1 items-center text-xs">
-          {lane.emptyNote}
-        </p>
+        <LaneLabel detail="" name={track.name} />
       </div>
     );
   }

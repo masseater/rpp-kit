@@ -2,7 +2,7 @@ import { Array as Arr, Effect, Option, Schema, String as Str, pipe } from "effec
 import { Hex } from "effect/encoding";
 import { parse } from "node-html-parser";
 
-type Script = Readonly<{ src: string; code: string }>;
+type Script = Readonly<{ file: string; src: string; code: string }>;
 
 const SCRIPT_DIR = "assets";
 
@@ -20,11 +20,11 @@ class InlineStyle extends taggedError<InlineStyle, { readonly brand: unique symb
 const INLINE_STYLE_REASON =
   "CSP の style-src 'self' が inline のスタイルを止める。スタイルは CSS ファイルから読む";
 
-const srcOf = (code: string): Effect.Effect<string> =>
+const fileOf = (code: string): Effect.Effect<string> =>
   Effect.promise(() => crypto.subtle.digest("SHA-256", new TextEncoder().encode(code))).pipe(
     Effect.map(
       (digest) =>
-        `/${SCRIPT_DIR}/inline-${pipe(Hex.encode(new Uint8Array(digest)), Str.slice(START, HASH_LENGTH))}.js`,
+        `${SCRIPT_DIR}/inline-${pipe(Hex.encode(new Uint8Array(digest)), Str.slice(START, HASH_LENGTH))}.js`,
     ),
   );
 
@@ -34,7 +34,8 @@ const tagOf = (rawAttrs: string, src: string): string =>
 const externalize = Effect.fn("externalize")(function* externalize({
   html,
   file,
-}: Readonly<{ html: string; file: string }>) {
+  base,
+}: Readonly<{ html: string; file: string; base: string }>) {
   const root = parse(html);
   yield* Arr.match(root.querySelectorAll("style, [style]"), {
     onEmpty: () => Effect.void,
@@ -44,7 +45,11 @@ const externalize = Effect.fn("externalize")(function* externalize({
   const scripts: readonly Script[] = yield* pipe(
     inline,
     Effect.forEach((element) =>
-      Effect.map(srcOf(element.rawText), (src) => ({ src, code: element.rawText })),
+      Effect.map(fileOf(element.rawText), (script) => ({
+        file: script,
+        src: `${base}${script}`,
+        code: element.rawText,
+      })),
     ),
   );
   const ends = pipe(

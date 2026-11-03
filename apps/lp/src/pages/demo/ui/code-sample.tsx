@@ -11,7 +11,6 @@ const CodeSample = (): ReactNode => (
     <pre className="bg-foreground text-background overflow-x-auto rounded-lg p-4 text-xs leading-relaxed">
       {typing.output}
     </pre>
-    <p className="text-muted-foreground text-sm">{typing.note}</p>
   </section>
 );
 
