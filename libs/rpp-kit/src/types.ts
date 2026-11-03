@@ -8,7 +8,21 @@ type Source =
 
 type Item = Readonly<{ name: string; position: number; length: number; source: Source }>;
 
-type Track = Readonly<{ index: number; guid: string; name: string; items: readonly Item[] }>;
+type FxParam = Readonly<{ slider: number; value: number | string }>;
+
+type FxState = Readonly<{ guid: string; bypass: boolean; offline: boolean }>;
+
+type Fx =
+  | (FxState & Readonly<{ kind: "js"; file: string; params: readonly FxParam[] }>)
+  | (FxState & Readonly<{ kind: "other"; type: string }>);
+
+type Track = Readonly<{
+  index: number;
+  guid: string;
+  name: string;
+  items: readonly Item[];
+  fx: readonly Fx[];
+}>;
 
 type Marker = Readonly<{ id: number; name: string; time: number }>;
 
@@ -37,4 +51,18 @@ type Song = Readonly<{
   tracks: readonly Track[];
 }>;
 
-export type { Item, Marker, Note, Region, Section, Song, Source, Tempo, TempoPoint, Track };
+export type {
+  Fx,
+  FxParam,
+  FxState,
+  Item,
+  Marker,
+  Note,
+  Region,
+  Section,
+  Song,
+  Source,
+  Tempo,
+  TempoPoint,
+  Track,
+};
