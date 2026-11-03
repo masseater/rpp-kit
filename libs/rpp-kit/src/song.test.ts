@@ -4,6 +4,7 @@ import { expect, test } from "vite-plus/test";
 import type { SongOutline } from "./outline.ts";
 import { parseRpp } from "./parse.ts";
 import { readSong } from "./read.ts";
+import { songOf } from "./song.fixture.ts";
 import { outlineSong } from "./song.ts";
 import { renderSegments, segmentsOf } from "./virtual.ts";
 import type { Segment } from "./virtual.ts";
@@ -147,4 +148,28 @@ test("同じ名前のマーカーは最初のものを名前で引け、区間�
       { name: "Am7", start: 4, end: 4 },
     ],
   });
+});
+
+test("リージョンは始まりと終わりの行を id で組にし、マーカーと区間には入れない", () =>
+  expect(songOf("case.rpp")).resolves.toMatchObject({
+    regions: [
+      { id: 1, name: "Intro", start: 0, end: 4 },
+      { id: 2, name: "Verse", start: 4, end: 8 },
+    ],
+    markers: { Drop: { id: 3, name: "Drop", time: 10 } },
+    sections: [{ name: "Drop", start: 10, end: 22 }],
+  }));
+
+test("名前の無いマーカーは、前の区間を切るが、マーカーにも区間にも出さない", () => {
+  const source =
+    '<REAPER_PROJECT 0.1 7.0 0\n  MARKER 1 0 Am 0\n  MARKER 2 2 "" 0\n  MARKER 3 4 Em 0\n>\n';
+  expect(readSong(source)).toStrictEqual(
+    expect.objectContaining({
+      markers: { Am: { id: 1, name: "Am", time: 0 }, Em: { id: 3, name: "Em", time: 4 } },
+      sections: [
+        { name: "Am", start: 0, end: 2 },
+        { name: "Em", start: 4, end: 4 },
+      ],
+    }),
+  );
 });

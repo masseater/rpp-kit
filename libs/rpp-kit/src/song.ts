@@ -1,18 +1,18 @@
-import { Array as Arr, Match, Option, Order, Record as Rec, pipe } from "effect";
+import { Array as Arr, Match, Option, Record as Rec, pipe } from "effect";
 
+import { named, sectionsOf, timelineOf } from "./markers.ts";
+import type { Timeline } from "./markers.ts";
 import { midiNotes } from "./midi.ts";
-import { PARAM_INDEX, ZERO, chunksOf, linesOf, numberOr, paramOf, textOf } from "./nodes.ts";
-import type { MarkerOutline, SongOutline, TrackOutline } from "./outline.ts";
+import { PARAM_INDEX, ZERO, chunksOf, numberOr, paramOf, textOf } from "./nodes.ts";
+import type { SongOutline, TrackOutline } from "./outline.ts";
 import type { Chunk, Param } from "./parse.ts";
 import { tempoMapOf } from "./tempo.ts";
 import type { TempoMap } from "./tempo.ts";
-import type { Item, Marker, Note, Section, Source } from "./types.ts";
+import type { Item, Note, Source } from "./types.ts";
 
 type Placed = Readonly<{ chunk: Chunk; tempo: TempoMap }>;
 
 const DEFAULT_SAMPLE_RATE = 44_100;
-
-const NEXT = 1;
 
 const NO_SOURCE: Source = { kind: "other", type: "" };
 
@@ -70,17 +70,6 @@ const filesOf = (root: Chunk): readonly Param[] =>
     Arr.flatMap((source) => Arr.fromOption(firstParam(source, "FILE"))),
   );
 
-const markersOf = (root: Chunk): readonly MarkerOutline[] =>
-  pipe(
-    linesOf({ chunk: root, token: "MARKER" }),
-    Arr.map((line) => {
-      const name = Arr.get(line.params, PARAM_INDEX.third);
-      const time = Arr.get(line.params, PARAM_INDEX.second);
-      const id = numberOr(ZERO)(Arr.get(line.params, PARAM_INDEX.first));
-      return { marker: { id, name: textOf(name), time: numberOr(ZERO)(time) }, name, time };
-    }),
-  );
-
 const tracksOf = ({ chunk: root, tempo }: Placed): readonly TrackOutline[] =>
   pipe(
     chunksOf({ chunk: root, token: "TRACK" }),
@@ -94,24 +83,7 @@ const tracksOf = ({ chunk: root, tempo }: Placed): readonly TrackOutline[] =>
     }),
   );
 
-const byTime = Order.mapInput(Order.Number, (marker: Marker) => marker.time);
-
-const sectionsOf = (markers: readonly MarkerOutline[], length: number): readonly Section[] => {
-  const ordered = Arr.sortWith(markers, ({ marker }) => marker, byTime);
-  return pipe(
-    ordered,
-    Arr.map(({ marker }, index) => ({
-      name: marker.name,
-      start: marker.time,
-      end: Option.match(Arr.get(ordered, index + NEXT), {
-        onNone: () => length,
-        onSome: (next) => next.marker.time,
-      }),
-    })),
-  );
-};
-
-const lengthOf = (markers: readonly MarkerOutline[], tracks: readonly TrackOutline[]): number => {
+const lengthOf = ({ markers, regions }: Timeline, tracks: readonly TrackOutline[]): number => {
   const itemEnds = pipe(
     tracks,
     Arr.flatMap(({ track }) => track.items),
@@ -121,18 +93,23 @@ const lengthOf = (markers: readonly MarkerOutline[], tracks: readonly TrackOutli
     markers,
     Arr.map(({ marker }) => marker.time),
   );
-  return Math.max(ZERO, ...itemEnds, ...markerTimes);
+  const regionEnds = pipe(
+    regions,
+    Arr.map(({ end }) => end),
+  );
+  return Math.max(ZERO, ...itemEnds, ...markerTimes, ...regionEnds);
 };
 
 const outlineSong = (root: Chunk): SongOutline => {
   const tempoMap = tempoMapOf(root);
   const tempo = tempoMap.outline;
-  const allMarkers = markersOf(root);
+  const timeline = timelineOf(root);
   const allTracks = tracksOf({ chunk: root, tempo: tempoMap });
-  const length = lengthOf(allMarkers, allTracks);
-  const markers = Arr.dedupeWith(
-    allMarkers,
-    (left, right) => left.marker.name === right.marker.name,
+  const length = lengthOf(timeline, allTracks);
+  const markers = pipe(
+    timeline.markers,
+    Arr.filter(named),
+    Arr.dedupeWith((left, right) => left.marker.name === right.marker.name),
   );
   const tracks = Arr.dedupeWith(allTracks, (left, right) => left.track.name === right.track.name);
   const song = {
@@ -149,7 +126,8 @@ const outlineSong = (root: Chunk): SongOutline => {
       Arr.map(({ marker }) => [marker.name, marker] as const),
       Rec.fromEntries,
     ),
-    sections: sectionsOf(allMarkers, length),
+    regions: timeline.regions,
+    sections: sectionsOf({ markers: timeline.markers, length }),
     tracks: pipe(
       tracks,
       Arr.map(({ track }) => [track.name, track] as const),
