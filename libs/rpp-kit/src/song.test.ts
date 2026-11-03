@@ -1,10 +1,9 @@
 import { Array as Arr, Match, pipe, String as Str } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { trackNamed, tracksNamed } from "./named.ts";
 import type { SongOutline } from "./outline.ts";
 import { parseRpp } from "./parse.ts";
-import { readSong } from "./read.ts";
+import { readSong, trackNamed, tracksNamed } from "./read.ts";
 import { fromSong, songOf } from "./song.fixture.ts";
 import { outlineSong } from "./song.ts";
 import { renderSegments, segmentsOf } from "./virtual.ts";
