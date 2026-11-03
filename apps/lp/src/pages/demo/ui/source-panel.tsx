@@ -18,7 +18,7 @@ const SourcePanel = (): ReactNode => {
     setTab("rpp");
   }, [setTab]);
   return (
-    <Panel className="h-96 lg:row-span-2 lg:h-auto">
+    <Panel className="h-96 lg:h-auto">
       <div className="border-border flex border-b px-1" role="tablist">
         <TabButton label={playground.panes.main} active={tab === "main"} onSelect={showMain} />
         <TabButton label={playground.panes.rpp} active={tab === "rpp"} onSelect={showRpp} />

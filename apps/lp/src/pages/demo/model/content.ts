@@ -26,7 +26,7 @@ const playground = {
   generatedNote: "自動生成",
   output: {
     pending: "実行中",
-    empty: "出力はありません",
+
     timeout: "3 秒で打ち切りました",
     broken: "実行結果を読めませんでした",
   },

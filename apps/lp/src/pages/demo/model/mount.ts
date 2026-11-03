@@ -5,7 +5,7 @@ import type { Panes } from "./playground";
 
 type Pane = keyof Panes;
 
-type Mount = Readonly<{ container: HTMLDivElement; report: Report }>;
+type Mount = Readonly<{ container: HTMLElement; report: Report }>;
 
 const paneOf = (container: HTMLElement, pane: Pane): Option.Option<HTMLElement> =>
   Option.fromNullishOr(container.querySelector<HTMLElement>(`[data-pane="${pane}"]`));

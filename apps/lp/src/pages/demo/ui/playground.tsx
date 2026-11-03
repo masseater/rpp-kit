@@ -11,16 +11,16 @@ import { SourcePanel } from "./source-panel";
 const Playground = (): ReactNode => {
   const report = useReport();
   const mount = useCallback(
-    (container: HTMLDivElement) => mountPlayground({ container, report }),
+    (container: HTMLElement) => mountPlayground({ container, report }),
     [report],
   );
   return (
-    <section>
-      <div ref={mount} className="grid gap-3 lg:h-160 lg:grid-cols-2 lg:grid-rows-3">
+    <section ref={mount} className="flex flex-col gap-3">
+      <div className="grid gap-3 lg:h-120 lg:grid-cols-2">
         <SourcePanel />
         <GeneratedPanel />
-        <ConsolePanel />
       </div>
+      <ConsolePanel />
     </section>
   );
 };
