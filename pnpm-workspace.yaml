@@ -49,6 +49,7 @@ catalog:
   codemirror: 6.0.2
   comlink: 4.4.2
   typescript-6: npm:typescript@6.0.3
+  twoslash: 0.3.9
 catalogs:
   stack:
     "@distilled.cloud/cloudflare": 1.0.0-rc.18
