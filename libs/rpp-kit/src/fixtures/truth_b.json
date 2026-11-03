@@ -1,0 +1,32 @@
+[
+  {
+    "track": 0,
+    "name": "StepCross",
+    "notes": [
+      { "pitch": 60, "start": 2.0, "end": 2.25 },
+      { "pitch": 60, "start": 2.5, "end": 2.75 },
+      { "pitch": 60, "start": 3.0, "end": 3.25 },
+      { "pitch": 60, "start": 3.5, "end": 3.75 },
+      { "pitch": 60, "start": 3.999479, "end": 4.333333 },
+      { "pitch": 60, "start": 4.666667, "end": 5.0 },
+      { "pitch": 60, "start": 5.333333, "end": 5.666667 }
+    ]
+  },
+  {
+    "track": 1,
+    "name": "RampCross",
+    "notes": [
+      { "pitch": 62, "start": 7.0, "end": 7.333333 },
+      { "pitch": 62, "start": 7.666667, "end": 8.0 },
+      { "pitch": 62, "start": 8.29563, "end": 8.583005 },
+      { "pitch": 62, "start": 8.86278, "end": 9.135529 },
+      { "pitch": 62, "start": 9.401754, "end": 9.661904 },
+      { "pitch": 62, "start": 9.916375, "end": 10.165525 },
+      { "pitch": 62, "start": 10.409674, "end": 10.649111 },
+      { "pitch": 62, "start": 10.884099, "end": 11.114877 },
+      { "pitch": 62, "start": 11.341664, "end": 11.56466 },
+      { "pitch": 62, "start": 11.784049, "end": 12.0 },
+      { "pitch": 62, "start": 12.214286, "end": 12.428571 }
+    ]
+  }
+]

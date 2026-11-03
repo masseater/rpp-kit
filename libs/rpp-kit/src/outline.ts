@@ -13,12 +13,14 @@ type MarkerOutline = Readonly<{
 
 type TrackOutline = Readonly<{ track: Track; name: Option.Option<Param> }>;
 
+type TempoOutline = Readonly<{ bpm: Spanned; numerator: Spanned; denominator: Spanned }>;
+
 type SongOutline = Readonly<{
   song: Song;
-  tempo: Readonly<{ bpm: Spanned; numerator: Spanned; denominator: Spanned }>;
+  tempo: TempoOutline;
   markers: readonly MarkerOutline[];
   tracks: readonly TrackOutline[];
   files: readonly Param[];
 }>;
 
-export type { MarkerOutline, SongOutline, Spanned, TrackOutline };
+export type { MarkerOutline, SongOutline, Spanned, TempoOutline, TrackOutline };

@@ -2,17 +2,19 @@ import { Array as Arr, Match, Number as Num, Option, Order, Record as Rec, pipe 
 
 import { PARAM_INDEX, ZERO, numberOr, paramOf } from "./nodes.ts";
 import type { Chunk, Line, Node, Param } from "./parse.ts";
-import type { Note } from "./types.ts";
+
+type SourceNote = Readonly<{ pitch: number; velocity: number; start: number; end: number }>;
 
 type Pending = Readonly<{ start: number; velocity: number }>;
 
 type Event = Readonly<{ ticks: number; kind: number; pitch: number; velocity: number }>;
 
-type Timed = Readonly<{ event: Event; time: number }>;
+type Timed = Readonly<{ event: Event; beat: number }>;
 
-type MidiState = Readonly<{ open: Readonly<Record<string, Pending>>; notes: readonly Note[] }>;
-
-type MidiSource = Readonly<{ source: Chunk; position: number; secondsPerQuarter: number }>;
+type MidiState = Readonly<{
+  open: Readonly<Record<string, Pending>>;
+  notes: readonly SourceNote[];
+}>;
 
 const DEFAULT_TICKS_PER_QUARTER = 960;
 
@@ -26,7 +28,7 @@ const NOTE_OFF = 0x80;
 
 const MIDI_EVENTS = new Set(["E", "e"]);
 
-const byStart = Order.mapInput(Order.Number, (note: Note) => note.start);
+const byStart = Order.mapInput(Order.Number, (note: SourceNote) => note.start);
 
 const hexAt =
   (index: number) =>
@@ -49,7 +51,7 @@ const eventOf = (line: Line): Event => {
 };
 
 const release =
-  ({ event, time }: Timed) =>
+  ({ event, beat }: Timed) =>
   (state: MidiState): MidiState =>
     Option.match(Rec.get(state.open, String(event.pitch)), {
       onNone: () => state,
@@ -59,7 +61,7 @@ const release =
           pitch: event.pitch,
           velocity: pending.velocity,
           start: pending.start,
-          duration: time - pending.start,
+          end: beat,
         }),
       }),
     });
@@ -71,7 +73,7 @@ const apply =
       Match.when({ kind: NOTE_ON, velocity: Num.isGreaterThan(ZERO) }, (event) => ({
         ...state,
         open: Rec.set(state.open, String(event.pitch), {
-          start: timed.time,
+          start: timed.beat,
           velocity: event.velocity,
         }),
       })),
@@ -81,11 +83,10 @@ const apply =
       Match.orElse(() => state),
     );
 
-const timedEvents = ({ source, position, secondsPerQuarter }: MidiSource): readonly Timed[] => {
+const timedEvents = (source: Chunk): readonly Timed[] => {
   const ticksPerQuarter = numberOr(DEFAULT_TICKS_PER_QUARTER)(
     paramOf({ chunk: source, token: "HASDATA", index: PARAM_INDEX.second }),
   );
-  const secondsPerTick = secondsPerQuarter / ticksPerQuarter;
   const events = pipe(
     source.children,
     Arr.filter((node: Node): node is Line => node.kind === "line" && MIDI_EVENTS.has(node.token)),
@@ -94,17 +95,17 @@ const timedEvents = ({ source, position, secondsPerQuarter }: MidiSource): reado
   const ticks = Arr.scan(events, ZERO, (total, event) => total + event.ticks);
   return Arr.zipWith(events, Arr.drop(ticks, INITIAL_TOTAL), (event, total) => ({
     event,
-    time: position + total * secondsPerTick,
+    beat: total / ticksPerQuarter,
   }));
 };
 
-const midiNotes = (midi: MidiSource): readonly Note[] => {
+const midiNotes = (source: Chunk): readonly SourceNote[] => {
   let state: MidiState = { open: {}, notes: [] };
-  for (const timed of timedEvents(midi)) {
+  for (const timed of timedEvents(source)) {
     state = apply(timed)(state);
   }
   return Arr.sortWith(state.notes, (note) => note, byStart);
 };
 
 export { midiNotes };
-export type { MidiSource };
+export type { SourceNote };

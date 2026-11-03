@@ -97,12 +97,12 @@ const trackOrderOf = ({ tracks }: SongOutline): string =>
   );
 
 const segmentsOf = ({ outline, missing }: VirtualInput): readonly Segment[] => [
-  text('import type { Marker, Section, Track } from "rpp-kit";\n'),
+  text('import type { Marker, Section, TempoPoint, Track } from "rpp-kit";\n'),
   text('declare function assetExists(file: "このパスに素材のファイルがありません"): void;\n'),
   text("declare const song: {\n"),
   ...tempoSegments(outline),
   text(
-    `  readonly sampleRate: ${String(outline.song.sampleRate)};\n  readonly length: number;\n  readonly markers: {\n`,
+    `  readonly tempoMap: readonly TempoPoint[];\n  readonly sampleRate: ${String(outline.song.sampleRate)};\n  readonly length: number;\n  readonly markers: {\n`,
   ),
   ...markerSegments(outline),
   text("  };\n  readonly sections: readonly Section[];\n  readonly tracks: {\n"),
