@@ -16,15 +16,14 @@ declare const song: {
   };
   readonly regions: readonly Region[];
   readonly sections: readonly Section[];
-  readonly tracks: {
-    readonly "Midi GM": Track;
-    readonly "Bass    (BB)": Track;
-    readonly "Drums   (BB)": Track;
-    readonly "Piano   (BB)": Track;
-    readonly "Strings (BB)": Track;
-    readonly "Melody  (BB)": Track;
-  };
-  readonly trackOrder: readonly ["Midi GM", "Bass    (BB)", "Drums   (BB)", "Piano   (BB)", "Strings (BB)", "Melody  (BB)"];
+  readonly tracks: readonly [
+    Track & { readonly index: 0; readonly name: "Midi GM" },
+    Track & { readonly index: 1; readonly name: "Bass    (BB)" },
+    Track & { readonly index: 2; readonly name: "Drums   (BB)" },
+    Track & { readonly index: 3; readonly name: "Piano   (BB)" },
+    Track & { readonly index: 4; readonly name: "Strings (BB)" },
+    Track & { readonly index: 5; readonly name: "Melody  (BB)" },
+  ];
 };
 export { song };
 export default song;

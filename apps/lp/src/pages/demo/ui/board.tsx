@@ -1,4 +1,4 @@
-import { Array as Arr, Option, pipe } from "effect";
+import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { song } from "#/pages/demo/model/song";
@@ -13,9 +13,8 @@ const Board = (): ReactNode => (
       <SectionStrip />
     </div>
     {pipe(
-      song.trackOrder,
-      Arr.flatMap((name) => Arr.fromOption(Option.fromNullishOr(song.tracks[name]))),
-      Arr.map((track, index) => <Lane index={index} key={track.name} track={track} />),
+      song.tracks,
+      Arr.map((track) => <Lane index={track.index} key={track.guid} track={track} />),
     )}
   </div>
 );

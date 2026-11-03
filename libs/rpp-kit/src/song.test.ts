@@ -3,8 +3,8 @@ import { expect, test } from "vite-plus/test";
 
 import type { SongOutline } from "./outline.ts";
 import { parseRpp } from "./parse.ts";
-import { readSong } from "./read.ts";
-import { songOf } from "./song.fixture.ts";
+import { readSong, trackNamed, tracksNamed } from "./read.ts";
+import { fromSong, songOf } from "./song.fixture.ts";
 import { outlineSong } from "./song.ts";
 import { renderSegments, segmentsOf } from "./virtual.ts";
 import type { Segment } from "./virtual.ts";
@@ -74,7 +74,9 @@ test("テンポとマーカー名を、.rpp の文字に対応づけたリテラ
   const code = render(segmentsOf({ outline: outline(), missing: [] }));
   expect(code).toContain("readonly bpm: 120; readonly numerator: 3; readonly denominator: 4");
   expect(code).toContain('readonly "Intro": Marker & { readonly time: 0.000000 }');
-  expect(code).toContain('readonly trackOrder: readonly ["Keys", "Vocal"]');
+  expect(code).toContain(
+    'readonly tracks: readonly [\n    Track & { readonly index: 0; readonly name: "Keys" },\n    Track & { readonly index: 1; readonly name: "Vocal" },\n  ];',
+  );
 });
 
 test("無い素材のファイルごとに、そのパラメーターへ対応づけた assetExists の呼び出しを置く", () => {
@@ -108,28 +110,31 @@ test("マーカーを名前で引け、区間は次のマーカーか曲の終�
 });
 
 test("MIDI のノートを秒に直し、項目の位置を足す", () => {
-  expect(readSong(SMALL_RPP).tracks).toMatchObject({
-    Keys: {
-      items: [
-        {
-          source: {
-            kind: "midi",
-            notes: [
-              { pitch: 60, velocity: 100, start: 1, duration: 0.5 },
-              { pitch: 64, velocity: 80, start: 1.5, duration: 0.25 },
-            ],
-          },
+  expect(trackNamed(readSong(SMALL_RPP), "Keys")).toMatchObject({
+    items: [
+      {
+        source: {
+          kind: "midi",
+          notes: [
+            { pitch: 60, velocity: 100, start: 1, duration: 0.5 },
+            { pitch: 64, velocity: 80, start: 1.5, duration: 0.25 },
+          ],
         },
-      ],
-    },
+      },
+    ],
   });
 });
 
-test("音声の項目は素材のファイル名を持ち、トラックは並び順を保つ", () => {
-  expect(readSong(SMALL_RPP)).toMatchObject({
-    tracks: { Vocal: { items: [{ source: { kind: "audio", file: "vocal take.wav" } }] } },
-    trackOrder: ["Keys", "Vocal"],
-  });
+test("音声の項目は素材のファイル名を持ち、トラックは並び順の番号と GUID を持つ", () => {
+  expect(readSong(SMALL_RPP).tracks).toMatchObject([
+    { index: 0, guid: "{00000000-0000-0000-0000-000000000010}", name: "Keys" },
+    {
+      index: 1,
+      guid: "{00000000-0000-0000-0000-000000000011}",
+      name: "Vocal",
+      items: [{ source: { kind: "audio", file: "vocal take.wav" } }],
+    },
+  ]);
 });
 
 test("閉じていないチャンクは、開いた位置をエラーにする", () => {
@@ -212,14 +217,12 @@ const MEDIA_RPP = `<REAPER_PROJECT 0.1 7.0 0
 `;
 
 test("動画と画像の SOURCE VIDEO は video にし、SECTION は中の SOURCE を読む", () => {
-  expect(readSong(MEDIA_RPP).tracks).toMatchObject({
-    Media: {
-      items: [
-        { source: { kind: "video", file: "clip.mp4" } },
-        { source: { kind: "video", file: "cover.png" } },
-        { source: { kind: "audio", file: "loop.wav" } },
-      ],
-    },
+  expect(trackNamed(readSong(MEDIA_RPP), "Media")).toMatchObject({
+    items: [
+      { source: { kind: "video", file: "clip.mp4" } },
+      { source: { kind: "video", file: "cover.png" } },
+      { source: { kind: "audio", file: "loop.wav" } },
+    ],
   });
 });
 
@@ -246,4 +249,24 @@ test("リージョンだけの曲では、区間はリージョンを開始の�
     { name: "Verse", start: 0, end: 8 },
     { name: "Chorus", start: 8, end: 16 },
   ]);
+});
+
+test("同じ名前のトラックも全部残り、名前で全部を並び順に引ける", () =>
+  expect(
+    fromSong({ name: "case.rpp", read: (song) => tracksNamed(song, "Deck") }),
+  ).resolves.toMatchObject([
+    { index: 0, guid: "{E0DD263E-4330-4D03-A36C-4D092D024364}", name: "Deck" },
+    { index: 1, guid: "{3BC109D1-C88F-4745-80B6-DABE2C87CA39}", name: "Deck" },
+  ]));
+
+test("名前で引くと最初のトラックを返し、pipe からも使える", () =>
+  expect(
+    fromSong({ name: "case.rpp", read: (song) => pipe(song, trackNamed("")) }),
+  ).resolves.toMatchObject({
+    index: 2,
+    items: [{ name: "loop" }],
+  }));
+
+test("無い名前で引くと何も返さない", () => {
+  expect(trackNamed(readSong(SMALL_RPP), "Bass")).toBeUndefined();
 });

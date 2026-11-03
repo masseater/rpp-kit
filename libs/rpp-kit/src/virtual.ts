@@ -73,9 +73,9 @@ const trackSegments = ({ tracks }: SongOutline): readonly Segment[] =>
   pipe(
     tracks,
     Arr.flatMap(({ track, name }) => [
-      text("    readonly "),
+      text(`    Track & { readonly index: ${String(track.index)}; readonly name: `),
       ...keyOf(name, track.name),
-      text(": Track;\n"),
+      text(" },\n"),
     ]),
   );
 
@@ -89,13 +89,6 @@ const missingSegments = (missing: readonly Param[]): readonly Segment[] =>
     ]),
   );
 
-const trackOrderOf = ({ tracks }: SongOutline): string =>
-  pipe(
-    tracks,
-    Arr.map(({ track }) => JSON.stringify(track.name)),
-    Arr.join(", "),
-  );
-
 const segmentsOf = ({ outline, missing }: VirtualInput): readonly Segment[] => [
   text('import type { Marker, Region, Section, TempoPoint, Track } from "rpp-kit";\n'),
   text('declare function assetExists(file: "このパスに素材のファイルがありません"): void;\n'),
@@ -106,12 +99,10 @@ const segmentsOf = ({ outline, missing }: VirtualInput): readonly Segment[] => [
   ),
   ...markerSegments(outline),
   text(
-    "  };\n  readonly regions: readonly Region[];\n  readonly sections: readonly Section[];\n  readonly tracks: {\n",
+    "  };\n  readonly regions: readonly Region[];\n  readonly sections: readonly Section[];\n  readonly tracks: readonly [\n",
   ),
   ...trackSegments(outline),
-  text(
-    `  };\n  readonly trackOrder: readonly [${trackOrderOf(outline)}];\n};\nexport { song };\nexport default song;\n`,
-  ),
+  text("  ];\n};\nexport { song };\nexport default song;\n"),
   ...missingSegments(missing),
 ];
 

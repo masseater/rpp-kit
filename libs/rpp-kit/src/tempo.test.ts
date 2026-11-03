@@ -1,13 +1,10 @@
-import { Function as Fn } from "effect";
 import { expect, test } from "vite-plus/test";
 
 import { readSong } from "./read.ts";
 import { mismatchesOf, songOf } from "./song.fixture.ts";
 
 test("テンポの線の段差となめらかな変化をまたいで、MIDI のノートを秒に直す", () =>
-  expect(
-    mismatchesOf({ rpp: "case_b.rpp", truth: "truth_b.json", edit: Fn.identity }),
-  ).resolves.toStrictEqual([]));
+  expect(mismatchesOf({ rpp: "case_b.rpp", truth: "truth_b.json" })).resolves.toStrictEqual([]));
 
 test("テンポの線があれば、tempo は線の最初の点に合わせ、線を tempoMap に出す", () =>
   expect(songOf("case_b.rpp")).resolves.toMatchObject({

@@ -1,51 +1,20 @@
-import {
-  Array as Arr,
-  Match,
-  Number as Num,
-  Option,
-  Record as Rec,
-  String as Str,
-  pipe,
-} from "effect";
+import { Array as Arr, Match, Number as Num, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
 import { readSong } from "./read.ts";
 import { mismatchesOf, songOf } from "./song.fixture.ts";
 
-const TRACK_NAMES = ["DeckA", "DeckB", "LoopT", "TakeT"] as const;
-
-const TRACK_NAME = /^ {4}NAME .*$/u;
-
-const renameTracks = (rpp: string): string => {
-  const lines = Str.split(rpp, "\n");
-  const tracks = pipe(
-    lines,
-    Arr.map((line, index) => ({ line, index })),
-    Arr.filter(({ line }) => TRACK_NAME.test(line)),
-    Arr.map(({ index }) => index),
-  );
-  return pipe(
-    lines,
-    Arr.map((line, index) =>
-      pipe(
-        Arr.findFirstIndex(tracks, (track) => track === index),
-        Arr.fromOption,
-        Arr.flatMap((track) => Arr.fromOption(Arr.get(TRACK_NAMES, track))),
-        Arr.match({ onEmpty: () => line, onNonEmpty: ([name]) => `    NAME ${name}` }),
-      ),
-    ),
-    Arr.join("\n"),
-  );
-};
-
 test("選ばれたテイクのソースを、トリム・再生速度・ループ・開始位置のずれに合わせて鳴らす", () =>
-  expect(
-    mismatchesOf({ rpp: "case.rpp", truth: "truth.json", edit: renameTracks }),
-  ).resolves.toStrictEqual([]));
+  expect(mismatchesOf({ rpp: "case.rpp", truth: "truth.json" })).resolves.toStrictEqual([]));
 
 test("アイテムの名前は選ばれたテイクの名前にする", () =>
   expect(songOf("case.rpp")).resolves.toMatchObject({
-    tracks: { Deck: { items: [{ name: "trim" }] } },
+    tracks: [
+      { items: [{ name: "trim" }] },
+      { items: [{ name: "rate2" }] },
+      { items: [{ name: "loop" }] },
+      { items: [{ name: "" }] },
+    ],
   }));
 
 test("SOFFS に拍の数が無ければ、秒をアイテムの位置のテンポで拍に直す", () => {
@@ -73,11 +42,9 @@ test("SOFFS に拍の数が無ければ、秒をアイテムの位置のテン�
   >
 >
 `;
-  expect(readSong(source).tracks).toMatchObject({
-    Keys: {
-      items: [{ source: { kind: "midi", notes: [{ pitch: 62, start: 0, duration: 0.25 }] } }],
-    },
-  });
+  expect(readSong(source).tracks).toMatchObject([
+    { items: [{ source: { kind: "midi", notes: [{ pitch: 62, start: 0, duration: 0.25 }] } }] },
+  ]);
 });
 
 const RATE_RPP = `<REAPER_PROJECT 0.1 7.0 0
@@ -109,9 +76,8 @@ const DIGITS = 4;
 
 test("PLAYRATE はテンポの変わり目をまたいでも、プロジェクトの拍に対してかける", () => {
   const starts = pipe(
-    Rec.get(readSong(RATE_RPP).tracks, "Keys"),
-    Option.map(({ items }) => items),
-    Option.getOrElse(() => []),
+    readSong(RATE_RPP).tracks,
+    Arr.flatMap(({ items }) => items),
     Arr.flatMap(({ source }) =>
       Match.value(source).pipe(
         Match.when({ kind: "midi" }, (midi) => midi.notes),

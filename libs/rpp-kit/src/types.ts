@@ -8,7 +8,7 @@ type Source =
 
 type Item = Readonly<{ name: string; position: number; length: number; source: Source }>;
 
-type Track = Readonly<{ name: string; items: readonly Item[] }>;
+type Track = Readonly<{ index: number; guid: string; name: string; items: readonly Item[] }>;
 
 type Marker = Readonly<{ id: number; name: string; time: number }>;
 
@@ -34,8 +34,7 @@ type Song = Readonly<{
   markers: Readonly<Record<string, Marker>>;
   regions: readonly Region[];
   sections: readonly Section[];
-  tracks: Readonly<Record<string, Track>>;
-  trackOrder: readonly string[];
+  tracks: readonly Track[];
 }>;
 
 export type { Item, Marker, Note, Region, Section, Song, Source, Tempo, TempoPoint, Track };
