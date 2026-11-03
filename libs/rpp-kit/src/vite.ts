@@ -52,6 +52,17 @@ const transformRpp = (content: string, id: string): Promise<Readonly<{ code: str
 const rpp = (): Plugin => ({
   name: "rpp-kit",
   transform: { filter: { id: RPP_EXTENSION }, handler: transformRpp },
+  configureVitest: ({ defineCacheKeyGenerator }) => {
+    defineCacheKeyGenerator(({ id }) =>
+      Match.value(id).pipe(
+        Match.when(
+          (path) => RPP_EXTENSION.test(path),
+          (): false => false,
+        ),
+        Match.orElse(() => ""),
+      ),
+    );
+  },
 });
 
 export { declarationPath, rpp };
