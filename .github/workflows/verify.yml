@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -47,11 +48,11 @@ jobs:
         run: vp run gitleaks
         env:
           GITLEAKS_BASE: ${{ github.event.before }}
+      - run: .github/scripts/cloudflare-token.sh
       - id: verify
         run: vp run --log grouped verify
         env:
           GH_TOKEN: ${{ github.token }}
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       - if: always() && steps.verify.outcome != 'skipped'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
