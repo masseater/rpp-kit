@@ -13,9 +13,18 @@
         "allowedUnstableApis": [
           "@effect/platform-node/NodeServices#layer",
           "effect/FileSystem#FileSystem",
-          "effect/Path#Path"
+          "effect/Path#Path",
+          "@effect/atom-react",
+          "effect/reactivity/Atom"
         ]
       }
-    ]
-  }
+    ],
+    "allowArbitraryExtensions": true
+  },
+  "contentMappers": [
+    {
+      "package": "rpp-kit",
+      "extensions": [".rpp"]
+    }
+  ]
 }
