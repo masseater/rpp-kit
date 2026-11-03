@@ -107,9 +107,12 @@ export default defineConfig({
           allow: [
             { from: "lib", name: "Request" },
             { from: "lib", name: "Response" },
-            { from: "lib", name: ["HTMLElement", "HTMLDivElement"] },
+            { from: "lib", name: ["HTMLElement", "HTMLDivElement", "Worker"] },
             { from: "package", package: "@codemirror/view", name: "EditorView" },
-            { from: "package", package: "@codemirror/state", name: "Extension" },
+            { from: "package", package: "@codemirror/state", name: ["Extension", "Text"] },
+            { from: "package", package: "@codemirror/lint", name: "Diagnostic" },
+            { from: "package", package: "comlink", name: "Remote" },
+            { from: "package", package: "effect", name: "Ref" },
             { from: "package", package: "@valtown/codemirror-ts", name: "WorkerShape" },
             {
               from: "package",

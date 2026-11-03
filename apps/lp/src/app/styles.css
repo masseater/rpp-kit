@@ -8,6 +8,8 @@
   --primary-foreground: oklch(0.985 0 0);
   --card: oklch(1 0 0);
   --border: oklch(0.928 0.006 264.531);
+  --destructive: oklch(0.577 0.245 27.325);
+  --warning: oklch(0.666 0.179 58.318);
   --radius: 0.75rem;
   --track-1: oklch(0.586 0.253 17.585);
   --track-2: oklch(0.705 0.213 47.604);
@@ -27,6 +29,8 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-card: var(--card);
   --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-warning: var(--warning);
   --radius-lg: var(--radius);
   --color-track-1: var(--track-1);
   --color-track-2: var(--track-2);

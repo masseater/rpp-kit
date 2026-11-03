@@ -27,12 +27,18 @@ const webAnalyticsBeacon = (token: string) =>
 const contentSecurityPolicy = ({
   script,
   style,
-}: Readonly<{ script: readonly string[]; style: readonly string[] }>): string =>
+  worker = [],
+}: Readonly<{
+  script: readonly string[];
+  style: readonly string[];
+  worker?: readonly string[];
+}>): string =>
   pipe(
     [
       "default-src 'self'",
       pipe(["script-src 'self'", WEB_ANALYTICS_SCRIPT_ORIGIN, ...script], Arr.join(" ")),
       pipe(["style-src 'self'", ...style], Arr.join(" ")),
+      pipe(["worker-src 'self'", ...worker], Arr.join(" ")),
       "img-src 'self' data:",
       `connect-src 'self' ${WEB_ANALYTICS_REPORT_ORIGIN}`,
       "object-src 'none'",
@@ -45,7 +51,7 @@ const contentSecurityPolicy = ({
 
 const STATIC_PAGE_HEADERS = {
   ...SECURITY_HEADERS,
-  "Content-Security-Policy": contentSecurityPolicy({ script: [], style: [] }),
+  "Content-Security-Policy": contentSecurityPolicy({ script: [], style: [], worker: ["blob:"] }),
 } as const;
 
 const assetHeaders = ({
