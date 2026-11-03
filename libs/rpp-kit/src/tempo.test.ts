@@ -1,18 +1,8 @@
-import { NodeServices } from "@effect/platform-node";
-import {
-  Array as Arr,
-  Effect,
-  FileSystem,
-  ManagedRuntime,
-  Match,
-  Option,
-  Record as Rec,
-  Schema,
-  pipe,
-} from "effect";
+import { Array as Arr, Effect, Match, Option, Record as Rec, Schema, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
 import { readSong } from "./read.ts";
+import { fixtureText, songOf } from "./song.fixture.ts";
 import type { Song } from "./types.ts";
 
 const TOLERANCE = 0.001;
@@ -24,16 +14,6 @@ const TruthTrack = Schema.Struct({ name: Schema.String, notes: Schema.Array(Trut
 const Truth = Schema.fromJsonString(Schema.Array(TruthTrack));
 
 type Played = typeof TruthNote.Type;
-
-const runtime = ManagedRuntime.make(NodeServices.layer);
-
-const readFixture = Effect.fn("readFixture")(function* readFixture(name: string) {
-  const fileSystem = yield* FileSystem.FileSystem;
-  return yield* fileSystem.readFileString(new URL(`fixtures/${name}`, import.meta.url).pathname);
-});
-
-const songOf = (name: string): Promise<Song> =>
-  runtime.runPromise(Effect.map(readFixture(name), readSong));
 
 const near = (left: number, right: number): boolean => Math.abs(left - right) <= TOLERANCE;
 
@@ -60,8 +40,10 @@ const mismatchesOf = Effect.fn("mismatchesOf")(function* mismatchesOf(
   rpp: string,
   truthFile: string,
 ) {
-  const song = readSong(yield* readFixture(rpp));
-  const truth = yield* Schema.decodeEffect(Truth)(yield* readFixture(truthFile));
+  const song = readSong(yield* Effect.promise(() => fixtureText(rpp)));
+  const truth = yield* Schema.decodeEffect(Truth)(
+    yield* Effect.promise(() => fixtureText(truthFile)),
+  );
   return pipe(
     truth,
     Arr.flatMap(({ name, notes }) => {
@@ -81,9 +63,7 @@ const mismatchesOf = Effect.fn("mismatchesOf")(function* mismatchesOf(
 });
 
 test("テンポの線の段差となめらかな変化をまたいで、MIDI のノートを秒に直す", () =>
-  expect(runtime.runPromise(mismatchesOf("case_b.rpp", "truth_b.json"))).resolves.toStrictEqual(
-    [],
-  ));
+  expect(Effect.runPromise(mismatchesOf("case_b.rpp", "truth_b.json"))).resolves.toStrictEqual([]));
 
 test("テンポの線があれば、tempo は線の最初の点に合わせ、線を tempoMap に出す", () =>
   expect(songOf("case_b.rpp")).resolves.toMatchObject({
