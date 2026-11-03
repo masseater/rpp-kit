@@ -15,6 +15,7 @@ type TempoMap = Readonly<{
   outline: TempoOutline;
   points: readonly TempoPoint[];
   beatAt: (seconds: number) => number;
+  quartersPerSecondAt: (seconds: number) => number;
   secondsAt: (beat: number) => number;
 }>;
 
@@ -169,6 +170,10 @@ const tempoMapOf = (root: Chunk): TempoMap => {
     beatAt: (seconds) => {
       const segment = lastWhere(segments, ({ time }) => time <= seconds);
       return segment.beat + beatsWithin(segment, seconds - segment.time);
+    },
+    quartersPerSecondAt: (seconds) => {
+      const segment = lastWhere(segments, ({ time }) => time <= seconds);
+      return (segment.bpm + segment.slope * (seconds - segment.time)) / SECONDS_PER_MINUTE;
     },
     secondsAt: (beat) => {
       const segment = lastWhere(segments, (found) => found.beat <= beat);

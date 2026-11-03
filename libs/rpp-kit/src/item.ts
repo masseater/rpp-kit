@@ -140,12 +140,12 @@ const sourceOf = (outer: Chunk, placement: Placement): Source => {
   );
 };
 
-type OffsetBase = Readonly<{ position: number; base: number; tempo: TempoMap }>;
+type OffsetBase = Readonly<{ position: number; tempo: TempoMap }>;
 
-const offsetOf = (take: Chunk, { position, base, tempo }: OffsetBase): number =>
+const offsetOf = (take: Chunk, { position, tempo }: OffsetBase): number =>
   Option.match(paramOf({ chunk: take, token: "SOFFS", index: PARAM_INDEX.second }), {
     onSome: (quarters) => numberOr(ZERO)(Option.some(quarters)),
-    onNone: () => tempo.beatAt(position + numberOr(ZERO)(firstParam(take, "SOFFS"))) - base,
+    onNone: () => numberOr(ZERO)(firstParam(take, "SOFFS")) * tempo.quartersPerSecondAt(position),
   });
 
 type ItemInput = Readonly<{ item: Chunk; tempo: TempoMap }>;
@@ -160,7 +160,7 @@ const readItem = ({ item, tempo }: ItemInput): Item => {
     window: {
       base,
       length: (tempo.beatAt(position + length) - base) * rate,
-      offset: offsetOf(take, { position, base, tempo }),
+      offset: offsetOf(take, { position, tempo }),
       rate,
     },
     loop: numberOr(ZERO)(firstParam(item, "LOOP")) === LOOP_ON,
