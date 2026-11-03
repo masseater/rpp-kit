@@ -1,1 +1,1 @@
-export { song } from "./mou-ikkai.rpp";
+export { song } from "./timmy-intro.rpp";

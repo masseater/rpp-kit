@@ -1,4 +1,4 @@
-import { Match, Record as Rec } from "effect";
+import { Array as Arr, Match, Record as Rec, String as Str, pipe } from "effect";
 import type { Note } from "rpp-kit";
 
 type Voice = Readonly<{ wave: OscillatorType; gain: number; attack: number; release: number }>;
@@ -21,12 +21,11 @@ type Engine = Readonly<{
 }>;
 
 const VOICES: Readonly<Record<string, Voice>> = {
-  Bass: { wave: "sawtooth", gain: 0.22, attack: 0.005, release: 0.08 },
-  Pad: { wave: "triangle", gain: 0.08, attack: 0.3, release: 0.4 },
-  Saw: { wave: "sawtooth", gain: 0.05, attack: 0.005, release: 0.05 },
-  Arp: { wave: "square", gain: 0.05, attack: 0.002, release: 0.05 },
-  Piano: { wave: "triangle", gain: 0.14, attack: 0.002, release: 0.3 },
-  Lead: { wave: "square", gain: 0.08, attack: 0.01, release: 0.1 },
+  Bass: { wave: "sawtooth", gain: 0.2, attack: 0.005, release: 0.08 },
+  Piano: { wave: "triangle", gain: 0.12, attack: 0.002, release: 0.3 },
+  Guitar: { wave: "square", gain: 0.04, attack: 0.002, release: 0.08 },
+  Strings: { wave: "triangle", gain: 0.06, attack: 0.25, release: 0.4 },
+  Melody: { wave: "square", gain: 0.07, attack: 0.01, release: 0.1 },
 };
 
 const DEFAULT_VOICE: Voice = { wave: "triangle", gain: 0.1, attack: 0.01, release: 0.1 };
@@ -120,6 +119,9 @@ const createEngine = (): Engine => {
   return { tone, kick, hiss, now: () => context.currentTime, close: () => context.close() };
 };
 
+const instrumentOf = (track: string): string =>
+  pipe(track, Str.trim, Str.split(" "), Arr.headNonEmpty);
+
 const drumOf = (pitch: number): "kick" | "snare" | "hat" =>
   Match.value(pitch).pipe(
     Match.when(KICK, () => "kick" as const),
@@ -133,8 +135,9 @@ const drumOf = (pitch: number): "kick" | "snare" | "hat" =>
 const play =
   (engine: Engine) =>
   (hit: Hit): void => {
-    if (hit.track !== DRUMS) {
-      engine.tone(hit, VOICES[hit.track] ?? DEFAULT_VOICE);
+    const instrument = instrumentOf(hit.track);
+    if (instrument !== DRUMS) {
+      engine.tone(hit, VOICES[instrument] ?? DEFAULT_VOICE);
       return;
     }
     const drum = drumOf(hit.note.pitch);

@@ -130,9 +130,17 @@ const tempoOf = (root: Chunk): SongOutline["tempo"] => {
 
 const outlineSong = (root: Chunk): SongOutline => {
   const tempo = tempoOf(root);
-  const markers = markersOf(root);
-  const tracks = tracksOf({ chunk: root, secondsPerQuarter: SECONDS_PER_MINUTE / tempo.bpm.value });
-  const length = lengthOf(markers, tracks);
+  const allMarkers = markersOf(root);
+  const allTracks = tracksOf({
+    chunk: root,
+    secondsPerQuarter: SECONDS_PER_MINUTE / tempo.bpm.value,
+  });
+  const length = lengthOf(allMarkers, allTracks);
+  const markers = Arr.dedupeWith(
+    allMarkers,
+    (left, right) => left.marker.name === right.marker.name,
+  );
+  const tracks = Arr.dedupeWith(allTracks, (left, right) => left.track.name === right.track.name);
   const song = {
     tempo: {
       bpm: tempo.bpm.value,
@@ -146,7 +154,7 @@ const outlineSong = (root: Chunk): SongOutline => {
       Arr.map(({ marker }) => [marker.name, marker] as const),
       Rec.fromEntries,
     ),
-    sections: sectionsOf(markers, length),
+    sections: sectionsOf(allMarkers, length),
     tracks: pipe(
       tracks,
       Arr.map(({ track }) => [track.name, track] as const),

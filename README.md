@@ -6,10 +6,12 @@ REAPER のプロジェクトファイル（`.rpp`）を、MIDI へ書き出さ�
 - `libs/rpp-kit` は `.rpp` のパーサーと、それを使う Vite プラグイン（`rpp-kit/vite`）と、
   TypeScript 7.1 の content mapper を持つ。
 - content mapper を有効にすると、マーカー名やテンポがリテラル型になり、
-  `song.markers.Chorus9` のような無いマーカーは型エラーになる。
+  `song.markers.Gm8` のような無いマーカーは型エラーになる。
   `.rpp` が参照する音声ファイルが無ければ、そのファイル名の行がエラーになる。
-- `apps/lp` はデモのページである。ai-produced で作った曲の `.rpp` を読み込み、
-  セクションとノートを並べて鳴らす。
+- `apps/lp` はデモのページである。GPLv3 で公開されているゲーム
+  [Timmy Time Adventure](https://github.com/warrior-rockk/timmy-time-adventure)
+  の `intro.rpp` を読み込み、セクションとノートを並べて鳴らす。
+  この `.rpp` は GPLv3 のまま再配布している。
 
 content mapper は TypeScript 7.1 のベータ版の機能で、`tsc --runExternalCode` で使う。
 oxlint の型検査はまだ対応していないので、`vp check` には `.d.rpp.ts` の型を渡している。
