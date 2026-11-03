@@ -8,7 +8,7 @@ import { PanelBody } from "./panel-body";
 import { PanelLabel } from "./panel-label";
 
 const ConsolePanel = (): ReactNode => (
-  <Panel className="h-64 lg:col-span-2 lg:h-auto">
+  <Panel className="max-h-96">
     <PanelLabel label={playground.panes.console} />
     <PanelBody>
       <ConsoleView />

@@ -19,8 +19,7 @@ const noticeOf = (output: Output): string =>
   Match.value(output).pipe(
     Match.discriminatorsExhaustive("status")({
       pending: () => playground.output.pending,
-      ran: ({ entries }) =>
-        Arr.match(entries, { onEmpty: () => playground.output.empty, onNonEmpty: () => "" }),
+      ran: () => "",
     }),
   );
 
@@ -35,7 +34,7 @@ const ConsoleView = (): ReactNode => {
           Arr.map((entry) => <ConsoleLine key={entry.id} entry={entry} />),
         )}
       </ol>
-      <p hidden={notice === ""} className="text-muted-foreground px-3 py-2">
+      <p hidden={notice === ""} className="text-muted-foreground px-4 py-2">
         {notice}
       </p>
     </div>

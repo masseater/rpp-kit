@@ -48,7 +48,7 @@ const createEditor = ({ host, doc, extensions }: Editor): EditorView => {
     parent: root,
     root,
     doc,
-    extensions: [basicSetup, theme, ...extensions],
+    extensions: [basicSetup, theme, EditorView.lineWrapping, ...extensions],
   });
 };
 
