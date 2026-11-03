@@ -152,14 +152,17 @@ test("同じ名前のマーカーは最初のものを名前で引け、区間�
   });
 });
 
-test("リージョンは始まりと終わりの行を id で組にし、マーカーと区間には入れない", () =>
+test("リージョンは始まりと終わりの行を id で組にし、マーカーには入れず、区間はリージョンにする", () =>
   expect(songOf("case.rpp")).resolves.toMatchObject({
     regions: [
       { id: 1, name: "Intro", start: 0, end: 4 },
       { id: 2, name: "Verse", start: 4, end: 8 },
     ],
     markers: { Drop: { id: 3, name: "Drop", time: 10 } },
-    sections: [{ name: "Drop", start: 10, end: 22 }],
+    sections: [
+      { name: "Intro", start: 0, end: 4 },
+      { name: "Verse", start: 4, end: 8 },
+    ],
   }));
 
 test("名前の無いマーカーは、前の区間を切るが、マーカーにも区間にも出さない", () => {
@@ -227,4 +230,20 @@ test("SECTION の中の素材のファイルも、有無を確かめる対象に
       Arr.map(({ text }) => text),
     ),
   ).toStrictEqual(["clip.mp4", "cover.png", "loop.wav"]);
+});
+
+test("リージョンだけの曲では、区間はリージョンを開始の順に並べ、名前の無いものは出さない", () => {
+  const source = `<REAPER_PROJECT 0.1 7.0 0
+  MARKER 2 8 Chorus 1
+  MARKER 2 16 "" 1
+  MARKER 1 0 Verse 1
+  MARKER 1 8 "" 1
+  MARKER 3 16 "" 1
+  MARKER 3 20 "" 1
+>
+`;
+  expect(readSong(source).sections).toStrictEqual([
+    { name: "Verse", start: 0, end: 8 },
+    { name: "Chorus", start: 8, end: 16 },
+  ]);
 });

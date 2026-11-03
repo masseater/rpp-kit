@@ -60,9 +60,9 @@ const timelineOf = (root: Chunk): Timeline => {
 
 const named = ({ marker }: MarkerOutline): boolean => Str.isNonEmpty(marker.name);
 
-type Sectioning = Readonly<{ markers: readonly MarkerOutline[]; length: number }>;
+type Sectioning = Readonly<{ timeline: Timeline; length: number }>;
 
-const sectionsOf = ({ markers, length }: Sectioning): readonly Section[] => {
+const markerSections = (markers: readonly MarkerOutline[], length: number): readonly Section[] => {
   const ordered = Arr.sortWith(markers, ({ marker }) => marker, byTime);
   return pipe(
     ordered,
@@ -77,6 +77,17 @@ const sectionsOf = ({ markers, length }: Sectioning): readonly Section[] => {
     Arr.map(({ outline: { marker }, end }) => ({ name: marker.name, start: marker.time, end })),
   );
 };
+
+const sectionsOf = ({ timeline, length }: Sectioning): readonly Section[] =>
+  Arr.match(timeline.regions, {
+    onEmpty: () => markerSections(timeline.markers, length),
+    onNonEmpty: (regions) =>
+      pipe(
+        regions,
+        Arr.filter(({ name }) => Str.isNonEmpty(name)),
+        Arr.map(({ name, start, end }) => ({ name, start, end })),
+      ),
+  });
 
 export { named, sectionsOf, timelineOf };
 export type { Sectioning, Timeline };
