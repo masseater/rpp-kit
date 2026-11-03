@@ -1,0 +1,53 @@
+[
+  {
+    "track": 0,
+    "name": "Deck",
+    "notes": [
+      { "pitch": 60, "start": 0.0, "end": 0.25 },
+      { "pitch": 60, "start": 0.5, "end": 0.75 },
+      { "pitch": 60, "start": 1.0, "end": 1.25 },
+      { "pitch": 60, "start": 1.5, "end": 1.75 }
+    ]
+  },
+  {
+    "track": 1,
+    "name": "Deck",
+    "notes": [
+      { "pitch": 62, "start": 4.0, "end": 4.125 },
+      { "pitch": 62, "start": 4.25, "end": 4.375 },
+      { "pitch": 62, "start": 4.5, "end": 4.625 },
+      { "pitch": 62, "start": 4.75, "end": 4.875 },
+      { "pitch": 62, "start": 5.0, "end": 5.125 },
+      { "pitch": 62, "start": 5.25, "end": 5.375 },
+      { "pitch": 62, "start": 5.5, "end": 5.625 },
+      { "pitch": 62, "start": 5.75, "end": 5.875 }
+    ]
+  },
+  {
+    "track": 2,
+    "name": "",
+    "notes": [
+      { "pitch": 64, "start": 10.0, "end": 10.333333 },
+      { "pitch": 64, "start": 10.666667, "end": 11.0 },
+      { "pitch": 64, "start": 11.333333, "end": 11.666667 },
+      { "pitch": 64, "start": 12.0, "end": 12.333333 },
+      { "pitch": 64, "start": 12.666667, "end": 13.0 },
+      { "pitch": 64, "start": 13.333333, "end": 13.666667 },
+      { "pitch": 64, "start": 14.0, "end": 14.333333 },
+      { "pitch": 64, "start": 14.666667, "end": 15.0 },
+      { "pitch": 64, "start": 15.333333, "end": 15.666667 },
+      { "pitch": 64, "start": 16.0, "end": 16.333333 },
+      { "pitch": 64, "start": 16.666667, "end": 17.0 },
+      { "pitch": 64, "start": 17.333333, "end": 17.666667 }
+    ]
+  },
+  {
+    "track": 3,
+    "name": "",
+    "notes": [
+      { "pitch": 72, "start": 20.166667, "end": 20.5 },
+      { "pitch": 72, "start": 20.833333, "end": 21.166667 },
+      { "pitch": 72, "start": 21.5, "end": 21.833333 }
+    ]
+  }
+]
