@@ -11,6 +11,8 @@ REAPER のプロジェクトファイル（`.rpp`）を、MIDI へ書き出さ�
   `markerNamed(song, "Gm8")` のような無いマーカーは型エラーになる。
   `song.tracks` は REAPER での並び順の配列で、同じ名前のトラックも全部残る。
   `trackNamed(song, "Bass")` と `tracksNamed(song, "Bass")` で名前から引け、無い名前は型エラーになる。
+  トラックの `fx` は FX チェーンの並び順で、JSFX はスライダーの番号と値を `params` に持つ
+  （例: `{ slider: 22, value: -3602 }`。ファイルを選ぶスライダーの値はファイル名の文字列）。
   `.rpp` が参照する音声ファイルが無ければ、そのファイル名の行がエラーになる。
 - `apps/lp` はデモのページである。GPLv3 で公開されているゲーム
   [Timmy Time Adventure](https://github.com/warrior-rockk/timmy-time-adventure)
