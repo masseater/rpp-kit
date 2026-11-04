@@ -29,7 +29,7 @@
 ## Alchemy
 
 足りない設定は alchemy にパッチを当てず、カスタムリソースで定義する。
-`apps/web/app-name.ts` の `APP_NAME` を変えるとリソースは作り直される。
+`apps/lp/app-name.ts` の `APP_NAME` を変えるとリソースは作り直される。
 
 ## その他
 

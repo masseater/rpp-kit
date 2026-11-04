@@ -109,7 +109,7 @@ jobs:
         run: .github/scripts/cloudflare-token.sh
       - if: steps.head.outputs.latest == 'true'
         run: vp exec alchemy deploy --stage production --yes
-        working-directory: apps/web
+        working-directory: apps/lp
 
   web-vitals:
     needs: deploy
@@ -174,7 +174,7 @@ jobs:
           sparse-checkout: |
             .github/scripts/ci-telemetry.sh
             .github/scripts/cloudflare-token.sh
-            apps/web/app-name.ts
+            apps/lp/app-name.ts
           sparse-checkout-cone-mode: false
       - if: github.ref == 'refs/heads/main'
         run: .github/scripts/cloudflare-token.sh

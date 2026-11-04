@@ -11,7 +11,10 @@
     "typecheck": "tsc --runExternalCode",
     "test": "vp test run --passWithNoTests",
     "steiger": "steiger ./src",
-    "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet"
+    "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet",
+    "prepare": "effect-tsgo patch --typescript --oxlint",
+    "deploy": "alchemy deploy",
+    "destroy": "alchemy destroy"
   },
   "dependencies": {
     "@codemirror/autocomplete": "catalog:",
@@ -34,13 +37,17 @@
     "typescript-6": "catalog:"
   },
   "devDependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "@alchemy.run/fly": "catalog:stack",
     "@effect/platform-node": "catalog:",
+    "@effect/tsgo": "catalog:stack",
     "@feature-sliced/steiger-plugin": "0.8.1",
     "@tailwindcss/vite": "4.3.3",
     "@tanstack/react-start": "catalog:stack",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "catalog:",
+    "alchemy": "catalog:stack",
     "node-html-parser": "9.0.6",
     "steiger": "catalog:stack",
     "twoslash": "catalog:",
