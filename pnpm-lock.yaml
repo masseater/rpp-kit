@@ -195,11 +195,11 @@ catalogs:
       specifier: 0.67.0
       version: 0.67.0
     '@r_masseater/oxlint-plugin-decision':
-      specifier: 0.0.4
-      version: 0.0.4
+      specifier: 0.1.1
+      version: 0.1.1
     '@r_masseater/oxlint-typed-rules':
-      specifier: 0.0.1
-      version: 0.0.1
+      specifier: 0.1.1
+      version: 0.1.1
     '@r_masseater/web-vitals-flow':
       specifier: 0.0.0
       version: 0.0.0
@@ -316,9 +316,6 @@ catalogs:
 overrides:
   effect: 4.1.2
   '@effect/platform-node': 4.1.2
-  '@r_masseater/oxlint-plugin-decision>effect': 4.0.0
-  '@r_masseater/oxlint-plugin-decision>@effect/platform-node': 4.0.0
-  '@effect/platform-node@4.0.0>@effect/platform-node-shared': 4.0.0
   '@effect/platform-node-shared': 4.1.2
   '@effect/sql-d1': 4.1.2
   vite@*: npm:@voidzero-dev/vite-plus-core@1.4.0
@@ -355,10 +352,10 @@ importers:
         version: 0.67.0(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
       '@r_masseater/oxlint-plugin-decision':
         specifier: 'catalog:'
-        version: 0.0.4(oxlint@1.89.0(oxlint-tsgolint@7.0.2004)(vite-plus@1.4.0(@opentelemetry/api@1.9.1)(@types/node@26.6.6)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.51.2)(typescript@6.0.3)(yaml@2.9.1)))(redis@6.2.1(@opentelemetry/api@1.9.1))
+        version: 0.1.1(oxlint@1.89.0(oxlint-tsgolint@7.0.2004)(vite-plus@1.4.0(@opentelemetry/api@1.9.1)(@types/node@26.6.6)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.51.2)(typescript@6.0.3)(yaml@2.9.1)))(redis@6.2.1(@opentelemetry/api@1.9.1))
       '@r_masseater/oxlint-typed-rules':
         specifier: 'catalog:'
-        version: 0.0.1(redis@6.2.1(@opentelemetry/api@1.9.1))
+        version: 0.1.1
       '@shadcn/lint':
         specifier: 'catalog:'
         version: 0.2.3(@typescript-eslint/parser@8.72.1(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
@@ -1183,24 +1180,11 @@ packages:
       react: '>=19.0.0 <20.0.0'
       scheduler: '>=0.25.0 <0.29.0'
 
-  '@effect/platform-node-shared@4.0.0':
-    resolution: {integrity: sha512-VBXHJU9UXVZPdQGGDRjGXpo+TpOzRwZuMrdKAtIxi1qwcRftmacZ1zTgIrzBa0Z2RA2KVkoOecQUsTlt/nJZhw==}
-    engines: {node: '>=18.0.0'}
-    peerDependencies:
-      effect: 4.1.2
-
   '@effect/platform-node-shared@4.1.2':
     resolution: {integrity: sha512-wSwl9A/G1hcVvF8nLI+YfB3EyOIDvWS6+lsTZBkmgDnPBL7m8YWZF+1HD+mdEsb52SUGfukip46Q3gRwSdk3QA==}
     engines: {node: '>=22.19.0'}
     peerDependencies:
       effect: 4.1.2
-
-  '@effect/platform-node@4.0.0':
-    resolution: {integrity: sha512-/L+4MUbl8FejPKLHLROYSOebvHnfixkP8KiblSD/DE5uH5xENZBHaux4nH6XMnRP+lr8ajpEJFS8sUrmmxFJeQ==}
-    engines: {node: '>=18.0.0'}
-    peerDependencies:
-      effect: 4.1.2
-      redis: '>=5.0.0 <7.0.0'
 
   '@effect/platform-node@4.1.2':
     resolution: {integrity: sha512-ye0UjxORdd5Qu3paZ1LljgGOALWHt7muP9VTpjUSCNfcesiB/Hm7wPJIvZeu4gnwpTe5BtEnO1VHngWqjJp8mA==}
@@ -1902,8 +1886,8 @@ packages:
     resolution: {integrity: sha512-hAX0pT/73190NLqBPPWSdBVGtbY6VOhWYK3qqHqtXQ1gK7kS2yz4+ivsN07hpJ6I3aeMtKP6J6npsEKOAzuTLA==}
     engines: {node: '>=20.0'}
 
-  '@openrouter/sdk@1.4.25':
-    resolution: {integrity: sha512-H218lYMy9WhU5cMigUvW/k+e1BimCqTTP+9PqssdDXnQ0gFCeEME0HTsFGPbR6UgJgyYh2hTct43/9pMcBem5A==}
+  '@openrouter/sdk@1.5.33':
+    resolution: {integrity: sha512-hbg4q/tZHOnggBk7Sjkel6COExpbe1+2p4Mt2YyvAloDXtNNaFkMab0SgVfoBdTgzweBlrJJ4jUHwHt5rFiadA==}
 
   '@opentelemetry/api-logs@0.223.0':
     resolution: {integrity: sha512-Oepm6etVPFCn0VWB1t833iOTgz1eYBDUPxcrOR/XvwzD1+Ag9VzSPSrrKAFNJ/haatj+8CXbG47pZXvdNQKDJw==}
@@ -2712,14 +2696,14 @@ packages:
   '@qnighy/marshal@0.1.3':
     resolution: {integrity: sha512-uaDZTJYtD2UgQTGemmgWeth+e2WapZm+GkAq8UU8AJ55PKRFaf1GkH7X/uzA+Ygu8iInzIlM2FGyCUnruyMKMg==}
 
-  '@r_masseater/oxlint-plugin-decision@0.0.4':
-    resolution: {integrity: sha512-elorXe2tEkHeCEMKGR9BChgzHd4i7RpoNXsZPGCI6GW81fZk9yUK4p3Pk+3RKRjrtjZz6q3fv1K2HdH1fTKrPQ==}
-    engines: {node: '>=20'}
+  '@r_masseater/oxlint-plugin-decision@0.1.1':
+    resolution: {integrity: sha512-UT4fgR7c1r6tafrzVXl3As0a0HyEmJMh2weEJoLH8K+yrCQeMN+hxNJH7FvvMHjn1JfJG88A+u6b7KTEpC8YqA==}
+    engines: {node: '>=26'}
     peerDependencies:
       oxlint: '>=1.87.0'
 
-  '@r_masseater/oxlint-typed-rules@0.0.1':
-    resolution: {integrity: sha512-BSQ3bXz3FIRG95P5uwPjBh08bSpOkOZxtxAghgfknbXSezthZeRnFYYD8CanB7NNbQcDe7hoZuA4ca8zWnWwQA==}
+  '@r_masseater/oxlint-typed-rules@0.1.1':
+    resolution: {integrity: sha512-omZ4MuUZOv/G//IxTE2CzgoDAZNu/JaCFSshxF9KjYMfmj34pZetysP2A82nMk6huWdMRv8S4k4/QKlY8mZy7Q==}
     engines: {node: '>=26'}
 
   '@r_masseater/web-vitals-flow@0.0.0':
@@ -4894,9 +4878,6 @@ packages:
     resolution: {integrity: sha512-T0ix8GhtxyKVfUFEcvdNDt3YGqlwkFHbD4/5bgFUDgFmxhI/cSRAeJ87/Sz//Cq8Eam6JX/e23RkoFO71P7aAA==}
     engines: {node: '>=20'}
     hasBin: true
-
-  effect@4.0.0:
-    resolution: {integrity: sha512-ooc1TG5t+FfzgYnFz2ff6BBKyZ7EwBRVXC7c4RhQUAD6/TZ2gTXXMeb4WX7a19ozQo4J73/QW+S00YAIresoMQ==}
 
   effect@4.1.2:
     resolution: {integrity: sha512-d3Oah1WyKxFLFh19yWheS5IXIVaITzxZ71JkE1rkUozq/6EcJSU5nPk5bF2QrSygZ3SQoiNQB8TsxFriyMeMaQ==}
@@ -7517,8 +7498,8 @@ packages:
     resolution: {integrity: sha512-MpUEN2OodtUzxvKQl72cUF7RQ5EiHsGvSsVG0ia9c5RbWGL2CI4C7EpPS8UTBIplnlzZiNuV56w+FuNxy3ty2Q==}
     engines: {node: '>=10'}
 
-  synckit@0.12.1:
-    resolution: {integrity: sha512-+V9Ec4D+DH9jD0IPSe1DP4h7xniLra0Ya716A9I5S6t2dRoWzj1yiwgolqszTKx/GfgGpWvtdABG3OoBzqDagw==}
+  synckit@0.12.3:
+    resolution: {integrity: sha512-U+/AXT6LWsxnj2vz9HeUuPWBNgdWxjyIEjEPdbJARC9txmgPzo2VEdqnFo4hHaNyMPtycyVJrSaQYeQv/PoyyA==}
     engines: {node: ^14.18.0 || >=16.0.0}
 
   syncpack-darwin-arm64@15.3.3:
@@ -9286,30 +9267,11 @@ snapshots:
       react: 19.3.1
       scheduler: 0.28.0
 
-  '@effect/platform-node-shared@4.0.0(effect@4.0.0)':
-    dependencies:
-      '@types/ws': 8.18.2
-      effect: 4.0.0
-      ws: 8.22.1
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
   '@effect/platform-node-shared@4.1.2(effect@4.1.2)':
     dependencies:
       '@types/ws': 8.18.2
       effect: 4.1.2
       ws: 8.22.1
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
-  '@effect/platform-node@4.0.0(effect@4.0.0)(redis@6.2.1(@opentelemetry/api@1.9.1))':
-    dependencies:
-      '@effect/platform-node-shared': 4.0.0(effect@4.0.0)
-      effect: 4.0.0
-      redis: 6.2.1(@opentelemetry/api@1.9.1)
-      undici: 8.12.3
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -9922,7 +9884,7 @@ snapshots:
 
   '@oozcitak/util@10.0.0': {}
 
-  '@openrouter/sdk@1.4.25':
+  '@openrouter/sdk@1.5.33':
     dependencies:
       zod: 4.6.7
 
@@ -10469,27 +10431,22 @@ snapshots:
     dependencies:
       '@babel/runtime-corejs3': 7.29.7
 
-  '@r_masseater/oxlint-plugin-decision@0.0.4(oxlint@1.89.0(oxlint-tsgolint@7.0.2004)(vite-plus@1.4.0(@opentelemetry/api@1.9.1)(@types/node@26.6.6)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.51.2)(typescript@6.0.3)(yaml@2.9.1)))(redis@6.2.1(@opentelemetry/api@1.9.1))':
+  '@r_masseater/oxlint-plugin-decision@0.1.1(oxlint@1.89.0(oxlint-tsgolint@7.0.2004)(vite-plus@1.4.0(@opentelemetry/api@1.9.1)(@types/node@26.6.6)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.51.2)(typescript@6.0.3)(yaml@2.9.1)))(redis@6.2.1(@opentelemetry/api@1.9.1))':
     dependencies:
-      '@effect/platform-node': 4.0.0(effect@4.0.0)(redis@6.2.1(@opentelemetry/api@1.9.1))
-      '@openrouter/sdk': 1.4.25
-      effect: 4.0.0
+      '@effect/platform-node': 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.9.1))
+      '@openrouter/sdk': 1.5.33
+      effect: 4.1.2
       oxlint: 1.89.0(oxlint-tsgolint@7.0.2004)(vite-plus@1.4.0(@opentelemetry/api@1.9.1)(@types/node@26.6.6)(@vitest/ui@5.0.5)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.51.2)(typescript@6.0.3)(yaml@2.9.1))
-      synckit: 0.12.1
+      synckit: 0.12.3
     transitivePeerDependencies:
       - bufferutil
       - redis
       - utf-8-validate
 
-  '@r_masseater/oxlint-typed-rules@0.0.1(redis@6.2.1(@opentelemetry/api@1.9.1))':
+  '@r_masseater/oxlint-typed-rules@0.1.1':
     dependencies:
-      '@effect/platform-node': 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.9.1))
       effect: 4.1.2
-      typescript: 6.0.3
-    transitivePeerDependencies:
-      - bufferutil
-      - redis
-      - utf-8-validate
+      typescript-7: typescript@7.1.0-beta
 
   '@r_masseater/web-vitals-flow@0.0.0(redis@6.2.1(@opentelemetry/api@1.9.1))(supports-color@7.2.0)(webpack@5.111.1(esbuild@0.28.1)(lightningcss@1.33.0)(postcss@8.5.31)(sharp@0.35.5(@types/node@26.6.6))(uglify-js@3.19.3))(yauzl@3.4.0)':
     dependencies:
@@ -12953,8 +12910,6 @@ snapshots:
       commander: 14.0.3
       minimatch: 11.0.3
       semver: 7.8.5
-
-  effect@4.0.0: {}
 
   effect@4.1.2: {}
 
@@ -16317,7 +16272,7 @@ snapshots:
     dependencies:
       has-flag: 4.0.0
 
-  synckit@0.12.1:
+  synckit@0.12.3:
     dependencies:
       '@dual-bundle/import-meta-resolve': 4.2.1
       '@pkgr/core': 0.3.6
