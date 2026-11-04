@@ -93,7 +93,7 @@ cd <name>
 
 ### 2. アプリ名を変える
 
-`apps/web/app-name.ts` の `APP_NAME` を、リポジトリの名前に変える。
+`apps/lp/app-name.ts` の `APP_NAME` を、リポジトリの名前に変える。
 同じ Cloudflare アカウントにある別のリポジトリと名前が重なると、互いのリソースを置き換え合う。
 
 ### 3. 手元で動かす
@@ -102,7 +102,7 @@ cd <name>
 vp env on
 vp install
 cp .env.example .env
-vp exec --filter web alchemy profile edit --add Cloudflare
+vp exec --filter lp alchemy profile edit --add Cloudflare
 ```
 
 `vp env on` で、リポジトリが求める版の Node.js と pnpm を vp が用意する。
@@ -111,10 +111,10 @@ Cloudflare の認証情報は、最後のコマンドで作る Alchemy のプロ
 
 ```sh
 vp run verify
-cd apps/web && vp run dev
+cd apps/lp && vp dev
 ```
 
-verify が通り、dev が表示した URL を開いてアプリが出れば準備はできている。
+verify が通り、dev が表示した URL を開いてページが出れば準備はできている。
 
 ### 4. GitHub の設定をそろえる
 
@@ -123,7 +123,7 @@ Actions の secrets、Actions による PR 作成の許可、既定ブランチ�
 setup の手順で設定する。
 
 設定が済めば、main への push のたびに本番へデプロイされる。
-手元からデプロイするときは `apps/web` で `vp run deploy` を実行する。
+手元からデプロイするときは `apps/lp` で `vp run deploy` を実行する。
 
 ## テンプレートの更新を取り込む
 

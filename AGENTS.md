@@ -3,15 +3,11 @@
 - コマンドは `vp` から実行し、`pnpm`・`npx` は直接使わない。`vp run <name>` は `package.json` と `vite.config.ts` のタスクで、組み込みコマンドとは別物である。
 - `vp run verify` が検査をまとめて流す。pre-push フックと Stop フックも同じ verify を走らせる。
 - `vp check` は oxlint-plugin-decision の判定に `.env` の `OPENROUTER_API_KEY` を使う。
-- テストを 1 つだけ走らせるときは、`apps/web` で `vp test run <ファイル>` を実行する。
-- D1 のスキーマは `*.table.ts` に書き、`apps/web` で `vp run db:generate` を実行してマイグレーションを作る。better-auth のテーブルは `vp run auth:generate` で生成する。
+- テストを 1 つだけ走らせるときは、そのパッケージで `vp test run <ファイル>` を実行する。
 
 ## 構成
 
-- `apps/web` は TanStack Start のアプリである。`alchemy.run.ts` が D1 と Worker を定義し、Cloudflare にデプロイする。
-- API は Elysia で書く。`src/app/routes/api.$.ts` が `/api/*` を `src/app/server/api.server.ts` のルーターへ渡し、各スライスのルートは `index.server.ts` からそこへ足す。
-- クライアントは `shared/api` で Eden の型から TanStack Query のクエリを作る。SSR 中は `createIsomorphicFn` がルートの `handle` を直接呼ぶ。
-- `apps/lp` は静的な LP の見本で、`apps/web` のスタックが `Website.StaticSite` でデプロイする。
+- `apps/lp` はデモの静的ページで、同じディレクトリの `alchemy.run.ts` が静的アセットだけの Worker として Cloudflare にデプロイする。
 
 ## 公開の静的ページ
 

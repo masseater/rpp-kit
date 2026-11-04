@@ -188,10 +188,6 @@ export default defineConfig({
         rules: { "shadcn/no-restyle": "off", "react/jsx-props-no-spreading": "off" },
       },
       {
-        files: ["apps/web/src/**/*.{ts,tsx}"],
-        rules: decisionRules,
-      },
-      {
         files: ["**/*.test.ts"],
         rules: turnedOff(decisionRules),
       },
@@ -247,7 +243,6 @@ export default defineConfig({
           "renovate",
           "actions-lint",
           "steiger-all",
-          "db-check-all",
           "fallow-all",
           "audit",
         ],
@@ -256,7 +251,6 @@ export default defineConfig({
       "mapper-typecheck": "vp run --filter lp typecheck",
       syncpack: "syncpack lint",
       "steiger-all": "vp run -r steiger",
-      "db-check-all": "vp run -r db:check",
       "fallow-all": "vp run -r fallow",
       audit: {
         command:
