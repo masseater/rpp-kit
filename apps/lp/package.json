@@ -41,7 +41,7 @@
     "@alchemy.run/fly": "catalog:stack",
     "@effect/platform-node": "catalog:",
     "@effect/tsgo": "catalog:stack",
-    "@feature-sliced/steiger-plugin": "0.8.1",
+    "@feature-sliced/steiger-plugin": "0.8.2",
     "@tailwindcss/vite": "4.3.3",
     "@tanstack/react-start": "catalog:stack",
     "@types/react": "19.3.0",
