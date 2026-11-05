@@ -298,8 +298,8 @@ catalogs:
       specifier: 44.199.0
       version: 44.199.0
     steiger:
-      specifier: 0.8.1
-      version: 0.8.1
+      specifier: 0.9.0
+      version: 0.9.0
     tailwindcss:
       specifier: 4.3.3
       version: 4.3.3
@@ -537,7 +537,7 @@ importers:
         version: 9.0.6
       steiger:
         specifier: catalog:stack
-        version: 0.8.1(typescript@7.1.0-beta)(vitest@5.0.5)
+        version: 0.9.0(typescript@7.1.0-beta)(vitest@5.0.5)
       twoslash:
         specifier: 'catalog:'
         version: 0.3.9(supports-color@7.2.0)(typescript@7.1.0-beta)
@@ -1542,9 +1542,6 @@ packages:
 
   '@feature-sliced/filesystem@3.1.1':
     resolution: {integrity: sha512-P3WpHkOqdH4572ZhTfeg/Sbw0qkIuMw0QcLyTUygfwTZg1yd7hIv8QDYbhTddNTiFDgBRJTrYw/s6r2hnlo6Tw==}
-
-  '@feature-sliced/steiger-plugin@0.8.1':
-    resolution: {integrity: sha512-hnRmnpGT7HoOv3Hy+et1xFq1IsCogp0SEfLlEC73kI74nlm0zQl8q1QN78iG0PEXyLZUAsqJIfG8rZHvva5vEg==}
 
   '@feature-sliced/steiger-plugin@0.8.2':
     resolution: {integrity: sha512-Gmc6b2GhjAT+Y+cQfHaCT+R1PnSuoOFcS6qsYtCnY8WjVH1FyT18FWJnhUjMyw4jN1Oqg0jSj5xeDDLs2InWoA==}
@@ -5881,10 +5878,6 @@ packages:
     resolution: {integrity: sha512-SFNOvSJ+Dgf/9An904Yx+CgSlIPCkIpao4qo51lpee25TIRejdH3rhR4EZMGoNx3/TP3O+wzWuiTFl4sqbltzA==}
     hasBin: true
 
-  js-yaml@5.4.2:
-    resolution: {integrity: sha512-m+aqu+LwO1O6sIopafj8HUVl5aawITwZQe/yHpMCKjaWBaA/d07B/QdMb3529REftiU+RMMHL3Vlsw3hON7vWg==}
-    hasBin: true
-
   js-yaml@5.4.3:
     resolution: {integrity: sha512-yzzNtgczwgoVHNigCyKTXcQJU4Y8t/ikU4UxXW0BvrLfHTGWZhsNcOT2s/a7vn81/4KqVnNmHjaUEPlvWnNwVw==}
     hasBin: true
@@ -7419,8 +7412,8 @@ packages:
   std-env@4.3.0:
     resolution: {integrity: sha512-OtU/EgQ1kIm5KwqQpBC6ZEMXrZRui11w8zgfTWp8cdO9B8OaPsbA8bTHO2P+HNo1VlUTGMVBwPhydu6poeXiag==}
 
-  steiger@0.8.1:
-    resolution: {integrity: sha512-w55+5bYKjqmYMotlaYtZjSZhAZmLFDGUkZ7wmN9m5Kf2Y4I6yYK9PGzZUfaSdnrYIFibyRG/vjtZPiFCsXNK6w==}
+  steiger@0.9.0:
+    resolution: {integrity: sha512-J/Iw/33PaHi8Ws99ikizIKV3uLL/PGCsq2Xqsj+qGASq48EukXHrvqHDgEWJAZuKToMha8uOmbNRT6S1XumqsA==}
     engines: {node: '>=22.18.0'}
     hasBin: true
 
@@ -9560,18 +9553,6 @@ snapshots:
   '@feature-sliced/filesystem@3.1.1':
     dependencies:
       typescript: 5.9.3
-
-  '@feature-sliced/steiger-plugin@0.8.1(typescript@7.1.0-beta)(vitest@5.0.5)':
-    dependencies:
-      '@feature-sliced/filesystem': 3.1.1
-      '@steiger/toolkit': 0.2.3(vitest@5.0.5)
-      fastest-levenshtein: 1.0.16
-      pluralize: 8.0.0
-      tsconfck: 3.1.6(typescript@7.1.0-beta)
-      web-tree-sitter: 0.26.13
-    transitivePeerDependencies:
-      - typescript
-      - vitest
 
   '@feature-sliced/steiger-plugin@0.8.2(typescript@7.1.0-beta)(vitest@5.0.5)':
     dependencies:
@@ -12734,7 +12715,7 @@ snapshots:
   cosmiconfig@10.0.1:
     dependencies:
       env-paths: 2.2.1
-      js-yaml: 5.4.2
+      js-yaml: 5.4.3
 
   cosmiconfig@9.0.2(typescript@6.0.3):
     dependencies:
@@ -14102,10 +14083,6 @@ snapshots:
       esprima: 4.0.1
 
   js-yaml@4.3.2:
-    dependencies:
-      argparse: 2.0.1
-
-  js-yaml@5.4.2:
     dependencies:
       argparse: 2.0.1
 
@@ -16176,10 +16153,10 @@ snapshots:
 
   std-env@4.3.0: {}
 
-  steiger@0.8.1(typescript@7.1.0-beta)(vitest@5.0.5):
+  steiger@0.9.0(typescript@7.1.0-beta)(vitest@5.0.5):
     dependencies:
       '@clack/prompts': 0.9.1
-      '@feature-sliced/steiger-plugin': 0.8.1(typescript@7.1.0-beta)(vitest@5.0.5)
+      '@feature-sliced/steiger-plugin': 0.8.2(typescript@7.1.0-beta)(vitest@5.0.5)
       chokidar: 4.0.3
       cosmiconfig: 10.0.1
       effector: 23.4.4
