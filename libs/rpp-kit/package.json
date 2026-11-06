@@ -7,10 +7,6 @@
     ".": "./src/index.ts",
     "./vite": "./src/vite.ts"
   },
-  "scripts": {
-    "typecheck": "tsc",
-    "test": "vp test run"
-  },
   "dependencies": {
     "@effect/platform-node": "catalog:",
     "effect": "catalog:stack",
