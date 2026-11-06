@@ -1,5 +1,5 @@
 import { NodeServices } from "@effect/platform-node";
-import { Effect, FileSystem, ManagedRuntime, Match, String as Str, pipe } from "effect";
+import { Effect, FileSystem, ManagedRuntime, Match, Schema, String as Str, pipe } from "effect";
 import type { Plugin } from "vite-plus";
 
 import { mapRpp } from "./map.ts";
@@ -36,12 +36,14 @@ const writeDeclaration = ({
     }),
   );
 
-const moduleOf = (content: string): string =>
-  `export const song = ${JSON.stringify(readSong(content))};\nexport default song;\n`;
+const encodeSong = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
+
+const moduleOf = (json: string): string => `export const song = ${json};\nexport default song;\n`;
 
 const loadRpp = Effect.fn("loadRpp")(function* loadRpp(source: Source) {
   yield* writeDeclaration(source);
-  return { code: moduleOf(source.content) };
+  const json = yield* encodeSong(readSong(source.content)).pipe(Effect.orDie);
+  return { code: moduleOf(json) };
 });
 
 const runtime = ManagedRuntime.make(NodeServices.layer);

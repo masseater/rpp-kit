@@ -66,8 +66,10 @@ const differs = ([expected, actual]: readonly [Played, Played]): boolean =>
   !near(expected.end, actual.end);
 
 const compare = Effect.fn("compare")(function* compare({ rpp, truth }: Comparison) {
-  const song = readSong(yield* readFixture(rpp));
-  const tracks = yield* Schema.decodeEffect(Truth)(yield* readFixture(truth));
+  const rppText = yield* readFixture(rpp);
+  const truthText = yield* readFixture(truth);
+  const song = readSong(rppText);
+  const tracks = yield* Schema.decodeEffect(Truth)(truthText);
   return pipe(
     tracks,
     Arr.flatMap(({ track, name, notes }) => {
