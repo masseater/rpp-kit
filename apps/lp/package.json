@@ -6,16 +6,6 @@
   "imports": {
     "#/*": "./src/*"
   },
-  "scripts": {
-    "build": "vp build",
-    "typecheck": "tsc --runExternalCode",
-    "test": "vp test run --passWithNoTests",
-    "steiger": "steiger ./src",
-    "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet",
-    "prepare": "effect-tsgo patch --typescript --oxlint",
-    "deploy": "alchemy deploy",
-    "destroy": "alchemy destroy"
-  },
   "dependencies": {
     "@codemirror/autocomplete": "catalog:",
     "@codemirror/lang-javascript": "catalog:",
@@ -41,7 +31,6 @@
     "@alchemy.run/fly": "catalog:stack",
     "@effect/platform-node": "catalog:",
     "@effect/tsgo": "catalog:stack",
-    "@feature-sliced/steiger-plugin": "0.8.2",
     "@tailwindcss/vite": "4.3.4",
     "@tanstack/react-start": "catalog:stack",
     "@types/react": "19.3.0",
@@ -49,7 +38,6 @@
     "@vitejs/plugin-react": "catalog:",
     "alchemy": "catalog:stack",
     "node-html-parser": "9.0.6",
-    "steiger": "catalog:stack",
     "twoslash": "catalog:",
     "typescript": "catalog:stack",
     "vite": "catalog:",
