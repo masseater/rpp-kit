@@ -22,39 +22,27 @@
       "groupName": "effect and alchemy"
     },
     {
-      "matchDepTypes": [
-        "pnpm-workspace.overrides"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
+      "matchDepTypes": ["pnpm-workspace.overrides"],
+      "matchUpdateTypes": ["major"],
       "enabled": false
     },
     {
-      "matchPackageNames": [
-        "typescript"
-      ],
+      "matchPackageNames": ["typescript"],
       "allowedVersions": "!/-dev\\./"
     },
     {
-      "matchDepNames": [
-        "typescript-6"
-      ],
+      "matchDepNames": ["typescript-6"],
       "allowedVersions": "<7"
     },
     {
-      "matchFileNames": [
-        "skills-lock.json"
-      ],
+      "matchFileNames": ["skills-lock.json"],
       "ignoreTests": false
     }
   ],
   "customManagers": [
     {
       "customType": "regex",
-      "managerFilePatterns": [
-        "/^skills-lock\\.json$/"
-      ],
+      "managerFilePatterns": ["/^skills-lock\\.json$/"],
       "matchStrings": [
         "\"source\": \"(?<depName>[^\"]+)\",\\s*\"ref\": \"(?<currentDigest>[0-9a-f]{40})\",\\s*\"sourceType\": \"github\""
       ],
@@ -63,26 +51,16 @@
     },
     {
       "customType": "regex",
-      "managerFilePatterns": [
-        "/^vite\\.config\\.ts$/"
-      ],
-      "matchStrings": [
-        "uvx (?:--from )?(?<depName>[a-z0-9-]+)@(?<currentValue>[0-9.]+)"
-      ],
+      "managerFilePatterns": ["/^vite\\.config\\.ts$/"],
+      "matchStrings": ["uvx (?:--from )?(?<depName>[a-z0-9-]+)@(?<currentValue>[0-9.]+)"],
       "datasourceTemplate": "pypi"
     },
     {
       "customType": "regex",
-      "managerFilePatterns": [
-        "/^vite\\.config\\.ts$/"
-      ],
-      "matchStrings": [
-        "go run (?<depName>[a-z0-9./-]+)@(?<currentValue>v[0-9.]+)"
-      ],
+      "managerFilePatterns": ["/^vite\\.config\\.ts$/"],
+      "matchStrings": ["go run (?<depName>[a-z0-9./-]+)@(?<currentValue>v[0-9.]+)"],
       "datasourceTemplate": "go"
     }
   ],
-  "gitIgnoredAuthors": [
-    "41898282+github-actions[bot]@users.noreply.github.com"
-  ]
+  "gitIgnoredAuthors": ["41898282+github-actions[bot]@users.noreply.github.com"]
 }
