@@ -1,4 +1,4 @@
-import { Array as Arr, Match, Option, String as Str, pipe } from "effect";
+import { Array as Arr, Match, Option, Schema, String as Str, pipe } from "effect";
 
 import type { SongOutline, Spanned } from "./outline.ts";
 import type { Param } from "./parse.ts";
@@ -19,11 +19,16 @@ const NUMERIC = /^-?\d+(?:\.\d+)?$/u;
 
 const QUOTE = '"';
 
+const encodeString = Schema.encodeOption(Schema.fromJsonString(Schema.String));
+
+const quoted = (value: string): string =>
+  Option.getOrElse(encodeString(value), () => `${QUOTE}${QUOTE}`);
+
 const text = (value: string): Segment => ({ kind: "text", text: value });
 
 const keyOf = (param: Option.Option<Param>, fallback: string): readonly Segment[] =>
   Option.match(param, {
-    onNone: () => [text(JSON.stringify(fallback))],
+    onNone: () => [text(quoted(fallback))],
     onSome: ({ text: name, start, end }) =>
       Match.value(PLAIN_NAME.test(name)).pipe(
         Match.when(true, (): readonly Segment[] => [
@@ -31,9 +36,7 @@ const keyOf = (param: Option.Option<Param>, fallback: string): readonly Segment[
           { kind: "verbatim", start, end },
           text(QUOTE),
         ]),
-        Match.orElse((): readonly Segment[] => [
-          { kind: "alias", text: JSON.stringify(name), start, end },
-        ]),
+        Match.orElse((): readonly Segment[] => [{ kind: "alias", text: quoted(name), start, end }]),
       ),
   });
 
@@ -84,7 +87,7 @@ const missingSegments = (missing: readonly Param[]): readonly Segment[] =>
     missing,
     Arr.flatMap(({ text: file, start, end }): readonly Segment[] => [
       text("assetExists("),
-      { kind: "atom", text: JSON.stringify(file), start, end },
+      { kind: "atom", text: quoted(file), start, end },
       text(");\n"),
     ]),
   );

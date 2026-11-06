@@ -43,7 +43,7 @@ const runPlayground = Effect.fn("runPlayground")(function* runPlayground({
 }: Session) {
   const worker = yield* checker;
   const code = codeOf(mapRpp(source));
-  const song = yield* Ref.make(songOf(source));
+  const song = yield* songOf(source).pipe(Effect.flatMap((json) => Ref.make(json)));
   const fork = yield* FiberHandle.makeRuntime<never>();
   yield* prepare(worker, code);
   const generated = yield* scopedEditor({
