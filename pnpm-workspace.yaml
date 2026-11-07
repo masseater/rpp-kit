@@ -9,7 +9,7 @@ catalogMode: prefer
 
 catalog:
   "@ast-grep/cli": 0.51.1
-  "@cloudflare/workers-types": 5.20261103.1
+  "@cloudflare/workers-types": 5.20261104.1
   "@effect/platform-node": 4.1.2
   "@eslint-react/eslint-plugin": 5.28.8
   "@shadcn/lint": 0.2.5
@@ -21,7 +21,7 @@ catalog:
   eslint-plugin-react-hooks: 7.1.1
   oxlint-plugin-eslint: 1.91.0
   syncpack: 15.3.3
-  vite: npm:@voidzero-dev/vite-plus-core@1.4.0
+  vite: npm:@voidzero-dev/vite-plus-core@1.5.0
   "@r_masseater/oxlint-plugin-decision": 0.1.1
   eslint-plugin-no-comments: 1.2.1
   eslint-plugin-baseline-js: 0.7.7
@@ -35,7 +35,7 @@ catalog:
   "@tanstack/intent": 0.5.6
   "@yarnpkg/parsers": 3.1.0
   markdownlint-cli2: 0.24.0
-  "@r_masseater/web-vitals-flow": 0.0.0
+  "@r_masseater/web-vitals-flow": 0.0.3
   "@codemirror/autocomplete": 6.20.4
   "@codemirror/lang-javascript": 6.2.5
   "@codemirror/lint": 6.9.7
@@ -59,20 +59,20 @@ catalogs:
     "@alchemy.run/cloudflare": 2.0.0-beta.85
     "@alchemy.run/fly": 2.0.0-beta.85
     alchemy: 2.0.0-beta.85
-    better-auth: 1.7.15
+    better-auth: 1.7.16
     drizzle-kit: 1.0.0-rc.5-ab785fc
     drizzle-orm: 1.0.0-rc.5-ab785fc
     eden-tanstack-react-query: 0.5.1
     effect: 4.1.2
     elysia: 1.4.30
-    fallow: 3.38.1
+    fallow: 3.39.0
     radix-ui: 1.8.1
-    renovate: 44.209.0
+    renovate: 44.210.1
     steiger: 0.9.0
     tailwindcss: 4.3.4
     textlint: 15.8.0
     typescript: 7.1.0-beta
-    vite-plus: 1.4.0
+    vite-plus: 1.5.0
 overrides:
   effect: "catalog:stack"
   "@effect/platform-node": "catalog:"
