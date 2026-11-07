@@ -1,5 +1,7 @@
 # rpp-kit
 
+このリポジトリは [masseater/masseater.dev](https://github.com/masseater/masseater.dev) の `libs/rpp-kit` と `apps/rpp-kit-demo` に移り、アーカイブされた。
+
 REAPER のプロジェクトファイル（`.rpp`）を、MIDI へ書き出さずに TypeScript から直接読むためのキットである。
 `import { song } from "./song.rpp"` と書くと、テンポ・マーカー・トラック・MIDI のノートがそのまま値として手に入る。
 
